@@ -47,8 +47,8 @@ public/
 ```bash
 npm install              # Install Next.js dependencies
 (cd studio && npm install) # Install Sanity Studio dependencies (separate node_modules)
-npm run dev              # Next.js dev server on port 8888 (Turbopack)
-npm run dev:all          # Run Next.js (8888) and Sanity Studio in parallel
+npm run dev              # Next.js dev server on port 6969 (Turbopack)
+npm run dev:all          # Run Next.js (6969) and Sanity Studio in parallel
 npm run build            # Production build (Turbopack)
 npm run lint             # ESLint (next/core-web-vitals + next/typescript)
 npm run studio:dev       # Sanity Studio dev server only

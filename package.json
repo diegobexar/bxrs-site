@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8888 --turbopack",
+    "dev": "next dev -p 6969 --turbopack",
     "dev:all": "concurrently -n web,studio -c cyan,magenta \"npm:dev\" \"npm:studio:dev\"",
     "build": "next build --turbopack",
     "start": "next start",
