@@ -2,18 +2,17 @@ import Link from "next/link";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import type { Metadata } from "next";
-import type { PINNED_PROJECTS_QUERY_RESULT } from "@/sanity/sanity.types";
+import type {
+  PINNED_PROJECTS_QUERY_RESULT,
+  FEATURED_PROJECTS_QUERY_RESULT,
+} from "@/sanity/sanity.types";
 
 export const metadata: Metadata = {
   title: "BXRS - Portfolio",
   description: "Creative portfolio and projects",
 };
 
-const PINNED_PROJECTS_QUERY = defineQuery(`*[
-  _type == "project"
-  && pinToTopRow == true
-  && defined(slug.current)
-]|order(order asc)[0...3]{
+const PROJECT_CARD_PROJECTION = `{
   _id,
   title,
   slug,
@@ -21,32 +20,31 @@ const PINNED_PROJECTS_QUERY = defineQuery(`*[
   cardBackgroundColor,
   cardTextColor,
   order
-}`);
+}`;
+
+const PINNED_PROJECTS_QUERY = defineQuery(`*[
+  _type == "project"
+  && pinToTopRow == true
+  && defined(slug.current)
+]|order(order asc)[0...3]${PROJECT_CARD_PROJECTION}`);
 
 const FEATURED_PROJECTS_QUERY = defineQuery(`*[
   _type == "project"
   && showOnHomepage == true
   && pinToTopRow != true
   && defined(slug.current)
-]|order(order asc){
-  _id,
-  title,
-  slug,
-  shortDescription,
-  cardBackgroundColor,
-  cardTextColor,
-  order
-}`);
+]|order(order asc)${PROJECT_CARD_PROJECTION}`);
 
 const options = { next: { revalidate: 30 } };
 
 export default async function IndexPage() {
-  const pinnedProjects = await client.fetch(PINNED_PROJECTS_QUERY, {}, options);
-  const featuredProjects = await client.fetch(FEATURED_PROJECTS_QUERY, {}, options);
+  const [pinnedProjects, featuredProjects] = await Promise.all([
+    client.fetch(PINNED_PROJECTS_QUERY, {}, options),
+    client.fetch(FEATURED_PROJECTS_QUERY, {}, options),
+  ]);
 
   return (
     <main className="container mx-auto min-h-screen max-w-7xl p-8">
-      {/* Pinned Projects - Always 3 columns */}
       {pinnedProjects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           {pinnedProjects.map((project) => (
@@ -55,7 +53,6 @@ export default async function IndexPage() {
         </div>
       )}
 
-      {/* Featured Projects - Responsive grid */}
       {featuredProjects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {featuredProjects.map((project) => (
@@ -64,7 +61,6 @@ export default async function IndexPage() {
         </div>
       )}
 
-      {/* No projects message */}
       {pinnedProjects.length === 0 && featuredProjects.length === 0 && (
         <div className="text-center py-20">
           <p className="text-lg text-foreground/60">No projects to display yet.</p>
@@ -74,7 +70,9 @@ export default async function IndexPage() {
   );
 }
 
-type ProjectCardData = PINNED_PROJECTS_QUERY_RESULT[number];
+type ProjectCardData =
+  | PINNED_PROJECTS_QUERY_RESULT[number]
+  | FEATURED_PROJECTS_QUERY_RESULT[number];
 
 function ProjectCard({ project }: { project: ProjectCardData }) {
   const backgroundColor = project.cardBackgroundColor || "#FFFFFF";

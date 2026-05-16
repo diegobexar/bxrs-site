@@ -38,7 +38,7 @@ export default async function PostPage({
       {postImageUrl && (
         <Image
           src={postImageUrl}
-          alt={post.title ?? ""}
+          alt={post.title || "Blog post image"}
           className="aspect-video rounded-xl"
           width={550}
           height={310}

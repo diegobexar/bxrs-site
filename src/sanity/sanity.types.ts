@@ -450,14 +450,6 @@ export type SETTINGS_QUERY_RESULT = {
   contactEmail: string | null;
 } | null;
 
-// Source: ../src/app/info/page.tsx
-// Variable: INFO_METADATA_QUERY
-// Query: *[_type == "siteSettings"][0]{siteTitle, siteDescription}
-export type INFO_METADATA_QUERY_RESULT = {
-  siteTitle: string | null;
-  siteDescription: string | null;
-} | null;
-
 // Source: ../src/app/page.tsx
 // Variable: PINNED_PROJECTS_QUERY
 // Query: *[  _type == "project"  && pinToTopRow == true  && defined(slug.current)]|order(order asc)[0...3]{  _id,  title,  slug,  shortDescription,  cardBackgroundColor,  cardTextColor,  order}
@@ -486,24 +478,11 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../src/app/projx/[slug]/page.tsx
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{  ...,  seoImage {    asset-> {      _id,      url    }  }}
+// Query: *[_type == "project" && slug.current == $slug][0]{  title,  shortDescription,  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
 export type PROJECT_QUERY_RESULT = {
-  _id: string;
-  _type: "project";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  shortDescription?: string;
-  showOnHomepage?: boolean;
-  pinToTopRow?: boolean;
-  order?: number;
-  cardBackgroundColor?: string;
-  cardTextColor?: string;
-  date?: string;
-  categories?: Array<string>;
-  content?: Array<
+  title: string | null;
+  shortDescription: string | null;
+  content: Array<
     | ({
         _key: string;
       } & ColorBlock)
@@ -522,9 +501,9 @@ export type PROJECT_QUERY_RESULT = {
     | ({
         _key: string;
       } & TextBlock)
-  >;
-  seoTitle?: string;
-  seoDescription?: string;
+  > | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
   seoImage: {
     asset: {
       _id: string;
@@ -545,10 +524,9 @@ declare module "@sanity/client" {
     '*[_type == "post" && slug.current == $slug][0]': POST_QUERY_RESULT;
     '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}': POSTS_QUERY_RESULT;
     '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  infoContent,\n  socialLinks,\n  contactEmail\n}': SETTINGS_QUERY_RESULT;
-    '*[_type == "siteSettings"][0]{siteTitle, siteDescription}': INFO_METADATA_QUERY_RESULT;
     '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  shortDescription,\n  cardBackgroundColor,\n  cardTextColor,\n  order\n}': PINNED_PROJECTS_QUERY_RESULT;
     '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(order asc){\n  _id,\n  title,\n  slug,\n  shortDescription,\n  cardBackgroundColor,\n  cardTextColor,\n  order\n}': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && slug.current == $slug][0]{\n  ...,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
+    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  shortDescription,\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
     '*[_type == "siteSettings"][0].theme': THEME_QUERY_RESULT;
   }
 }

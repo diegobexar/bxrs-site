@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
@@ -6,7 +7,11 @@ import type { Metadata } from "next";
 import { urlFor } from "@/sanity/image";
 
 const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0]{
-  ...,
+  title,
+  shortDescription,
+  content,
+  seoTitle,
+  seoDescription,
   seoImage {
     asset-> {
       _id,
@@ -17,12 +22,17 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
 
 const options = { next: { revalidate: 3600 } };
 
+const getProject = cache(async (slug: string) =>
+  client.fetch(PROJECT_QUERY, { slug }, options),
+);
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const project = await client.fetch(PROJECT_QUERY, await params, options);
+  const { slug } = await params;
+  const project = await getProject(slug);
 
   if (!project) {
     return {
@@ -57,7 +67,8 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const project = await client.fetch(PROJECT_QUERY, await params, options);
+  const { slug } = await params;
+  const project = await getProject(slug);
 
   if (!project) {
     return (
