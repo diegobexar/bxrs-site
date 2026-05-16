@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { type SanityDocument } from "next-sanity";
+import { defineQuery } from "next-sanity";
 
 import { client } from "@/sanity/client";
 
-const POSTS_QUERY = `*[
+const POSTS_QUERY = defineQuery(`*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`;
+]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`);
 
 const options = { next: { revalidate: 30 } };
 
 export default async function BlogPage() {
-  const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
+  const posts = await client.fetch(POSTS_QUERY, {}, options);
 
   return (
     <main className="container mx-auto min-h-screen max-w-3xl p-8">
@@ -19,9 +19,11 @@ export default async function BlogPage() {
       <ul className="flex flex-col gap-y-4">
         {posts.map((post) => (
           <li className="hover:underline" key={post._id}>
-            <Link href={`/blog/${post.slug.current}`}>
+            <Link href={`/blog/${post.slug?.current}`}>
               <h2 className="text-xl font-semibold">{post.title}</h2>
-              <p>{new Date(post.publishedAt).toLocaleDateString()}</p>
+              {post.publishedAt && (
+                <p>{new Date(post.publishedAt).toLocaleDateString()}</p>
+              )}
             </Link>
           </li>
         ))}

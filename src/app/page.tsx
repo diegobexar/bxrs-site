@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { type SanityDocument } from "next-sanity";
+import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import type { Metadata } from "next";
+import type { PINNED_PROJECTS_QUERY_RESULT } from "@/sanity/sanity.types";
 
 export const metadata: Metadata = {
   title: "BXRS - Portfolio",
   description: "Creative portfolio and projects",
 };
 
-// Get pinned projects (max 3)
-const PINNED_PROJECTS_QUERY = `*[
+const PINNED_PROJECTS_QUERY = defineQuery(`*[
   _type == "project"
   && pinToTopRow == true
   && defined(slug.current)
@@ -21,10 +21,9 @@ const PINNED_PROJECTS_QUERY = `*[
   cardBackgroundColor,
   cardTextColor,
   order
-}`;
+}`);
 
-// Get featured projects (not pinned, but shown on homepage)
-const FEATURED_PROJECTS_QUERY = `*[
+const FEATURED_PROJECTS_QUERY = defineQuery(`*[
   _type == "project"
   && showOnHomepage == true
   && pinToTopRow != true
@@ -37,21 +36,13 @@ const FEATURED_PROJECTS_QUERY = `*[
   cardBackgroundColor,
   cardTextColor,
   order
-}`;
+}`);
 
 const options = { next: { revalidate: 30 } };
 
 export default async function IndexPage() {
-  const pinnedProjects = await client.fetch<SanityDocument[]>(
-    PINNED_PROJECTS_QUERY,
-    {},
-    options
-  );
-  const featuredProjects = await client.fetch<SanityDocument[]>(
-    FEATURED_PROJECTS_QUERY,
-    {},
-    options
-  );
+  const pinnedProjects = await client.fetch(PINNED_PROJECTS_QUERY, {}, options);
+  const featuredProjects = await client.fetch(FEATURED_PROJECTS_QUERY, {}, options);
 
   return (
     <main className="container mx-auto min-h-screen max-w-7xl p-8">
@@ -83,12 +74,14 @@ export default async function IndexPage() {
   );
 }
 
-function ProjectCard({ project }: { project: SanityDocument }) {
+type ProjectCardData = PINNED_PROJECTS_QUERY_RESULT[number];
+
+function ProjectCard({ project }: { project: ProjectCardData }) {
   const backgroundColor = project.cardBackgroundColor || "#FFFFFF";
   const textColor = project.cardTextColor || "#000000";
 
   return (
-    <Link href={`/projx/${project.slug.current}`}>
+    <Link href={`/projx/${project.slug?.current}`}>
       <div
         className="aspect-square p-8 flex flex-col justify-center items-center text-center hover:opacity-90 transition-opacity"
         style={{ backgroundColor, color: textColor }}

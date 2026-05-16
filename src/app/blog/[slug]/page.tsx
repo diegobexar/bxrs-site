@@ -1,10 +1,10 @@
-import { PortableText, type SanityDocument } from "next-sanity";
+import { PortableText, defineQuery } from "next-sanity";
 import { urlFor } from "@/sanity/image";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import Image from "next/image";
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
+const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]`);
 
 const options = { next: { revalidate: 3600 } };
 
@@ -13,7 +13,7 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+  const post = await client.fetch(POST_QUERY, await params, options);
 
   if (!post) {
     return (
@@ -38,7 +38,7 @@ export default async function PostPage({
       {postImageUrl && (
         <Image
           src={postImageUrl}
-          alt={post.title}
+          alt={post.title ?? ""}
           className="aspect-video rounded-xl"
           width={550}
           height={310}
@@ -46,7 +46,9 @@ export default async function PostPage({
       )}
       <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
       <div className="prose">
-        <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p>
+        {post.publishedAt && (
+          <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p>
+        )}
         {Array.isArray(post.body) && <PortableText value={post.body} />}
       </div>
     </main>

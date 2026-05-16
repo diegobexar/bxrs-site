@@ -1,11 +1,11 @@
-import { type SanityDocument } from "next-sanity";
+import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import type { Metadata } from "next";
 import { urlFor } from "@/sanity/image";
 
-const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0]{
+const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0]{
   ...,
   seoImage {
     asset-> {
@@ -13,7 +13,7 @@ const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0]{
       url
     }
   }
-}`;
+}`);
 
 const options = { next: { revalidate: 3600 } };
 
@@ -22,11 +22,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const project = await client.fetch<SanityDocument>(
-    PROJECT_QUERY,
-    await params,
-    options
-  );
+  const project = await client.fetch(PROJECT_QUERY, await params, options);
 
   if (!project) {
     return {
@@ -61,11 +57,7 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const project = await client.fetch<SanityDocument>(
-    PROJECT_QUERY,
-    await params,
-    options
-  );
+  const project = await client.fetch(PROJECT_QUERY, await params, options);
 
   if (!project) {
     return (
