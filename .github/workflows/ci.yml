@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            studio/package-lock.json
+
+      - name: Install root deps
+        run: npm ci
+
+      - name: Install studio deps
+        run: npm ci
+        working-directory: studio
+
+      - name: Regenerate typegen artifacts
+        run: npm run typegen
+
+      - name: Fail if typegen artifacts drifted
+        run: |
+          if ! git diff --quiet src/sanity/sanity.types.ts studio/schema.json; then
+            echo "::error::Sanity typegen output is stale. Run 'npm run typegen' locally and commit the result."
+            git --no-pager diff src/sanity/sanity.types.ts studio/schema.json
+            exit 1
+          fi
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
