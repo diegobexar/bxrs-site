@@ -1,15 +1,19 @@
 {
-  "name": "nextjs-bxrs",
+  "name": "bxrs-site",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 8888 --turbopack",
+    "dev:all": "concurrently -n web,studio -c cyan,magenta \"npm:dev\" \"npm:studio:dev\"",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "studio:dev": "cd studio && npx sanity dev",
     "studio:build": "cd studio && npx sanity build",
-    "studio:deploy": "cd studio && npx sanity deploy"
+    "studio:deploy": "cd studio && npx sanity deploy",
+    "typegen:extract": "cd studio && npx sanity schema extract",
+    "typegen:generate": "cd studio && npx sanity typegen generate",
+    "typegen": "npm run typegen:extract && npm run typegen:generate"
   },
   "dependencies": {
     "@sanity/image-url": "^2.1.1",
@@ -26,6 +30,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
