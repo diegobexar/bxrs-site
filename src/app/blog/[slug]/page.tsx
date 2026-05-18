@@ -1,56 +1,87 @@
 import { PortableText, defineQuery } from "next-sanity";
-import { urlFor } from "@/sanity/image";
 import { client } from "@/sanity/client";
 import Link from "next/link";
-import Image from "next/image";
 
-const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]`);
+const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]{
+  title,
+  publishedAt,
+  excerpt,
+  body
+}`);
 
-const options = { next: { revalidate: 3600 } };
+const options = { next: { revalidate: 30 } };
+
+function formatDate(iso?: string | null): string {
+  if (!iso) return "";
+  return new Date(iso)
+    .toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+    .toUpperCase();
+}
+
+function readingTime(body: unknown): string {
+  if (!Array.isArray(body)) return "—";
+  const words = body
+    .map((block) => {
+      if (block?._type !== "block" || !Array.isArray(block.children)) return "";
+      return block.children
+        .map((c: { text?: string }) => c.text ?? "")
+        .join(" ");
+    })
+    .join(" ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 220));
+  return `${minutes} MIN`;
+}
 
 export default async function PostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const post = await client.fetch(POST_QUERY, await params, options);
+  const { slug } = await params;
+  const post = await client.fetch(POST_QUERY, { slug }, options);
 
   if (!post) {
     return (
-      <main className="container mx-auto min-h-screen max-w-3xl p-8">
-        <Link href="/blog" className="hover:underline">
-          ← Back to blog
-        </Link>
-        <h1 className="text-4xl font-bold mb-8">Post not found</h1>
+      <main className="blog-post">
+        <div className="crumb">
+          <Link href="/blog">← STUDIO NOTES</Link>
+        </div>
+        <h1>Post not found</h1>
       </main>
     );
   }
 
-  const postImageUrl = post.image
-    ? urlFor(post.image)?.width(550).height(310).url()
-    : null;
-
   return (
-    <main className="container mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-4">
-      <Link href="/blog" className="hover:underline">
-        ← Back to blog
-      </Link>
-      {postImageUrl && (
-        <Image
-          src={postImageUrl}
-          alt={post.title || "Blog post image"}
-          className="aspect-video rounded-xl"
-          width={550}
-          height={310}
-        />
-      )}
-      <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
+    <main className="blog-post">
+      <div className="crumb">
+        <Link href="/blog">← STUDIO NOTES</Link>
+      </div>
+
+      {post.excerpt && <p className="eyebrow">{post.excerpt}</p>}
+      <h1>{post.title}</h1>
+
+      <div className="post-meta">
+        <span>
+          <strong>POSTED</strong>
+          {formatDate(post.publishedAt)}
+        </span>
+        <span>
+          <strong>READ</strong>
+          {readingTime(post.body)}
+        </span>
+      </div>
+
       <div className="prose">
-        {post.publishedAt && (
-          <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p>
-        )}
         {Array.isArray(post.body) && <PortableText value={post.body} />}
       </div>
+
+      <div className="end">×</div>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {layoutFields, layoutFieldset} from './layoutFields'
+import {fontFamilyField, fontSizeField} from './fontFields'
 
 export const linkBlock = defineType({
   name: 'linkBlock',
@@ -31,6 +32,10 @@ export const linkBlock = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    fontFamilyField('titleFontFamily', 'Title Font Family', 'sans'),
+    fontSizeField('titleFontSize', 'Title Font Size', 't-24'),
+    fontFamilyField('descriptionFontFamily', 'Description Font Family', 'mono'),
+    fontSizeField('descriptionFontSize', 'Description Font Size', 't-12'),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',

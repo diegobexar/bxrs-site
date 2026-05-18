@@ -1,0 +1,56 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 20px 24px; gap: 10px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.copy { font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--bxrs-ink-2); max-width: 64ch; }
+.copy strong { color: var(--bxrs-ink); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
+.sample {
+  aspect-ratio: 1.3/1;
+  border: 1.5px solid var(--bxrs-ink);
+  padding: 10px 12px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+.sample .pair { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; opacity: 0.75; font-weight: 400; }
+.sample .ratio { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; font-weight: 500; align-self: flex-end; opacity: 0.85; }
+.fail { position: relative; }
+.fail::after { content: "FAIL · 3.2:1"; position: absolute; right: 8px; bottom: 6px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; color: #C61F12; font-weight: 500; background: #FFD7D2; padding: 1px 4px; }
+.fail .ratio { display: none; }
+</style></head>
+<body><div class="card">
+  <div class="title">Free bg picker \u00b7 text color filtered by WCAG AA contrast (\u22654.5:1)</div>
+  <div class="copy">Pick any background. The text-color dropdown shows only colors from <strong>BXRS_TEXT_COLORS</strong> that pass <strong>AA body contrast (\u22654.5:1)</strong> against your choice. Failing pairs are flagged in Studio before publish.</div>
+  <div class="grid">
+    <div class="sample" style="background:#FF3B2E;color:#111;">
+      <div><span class="pair">BG #FF3B2E + INK</span><br>VALID</div>
+      <span class="ratio">7.4:1 \u2713</span>
+    </div>
+    <div class="sample" style="background:#1442FF;color:#F4EFE3;">
+      <div><span class="pair">BG #1442FF + PAPER</span><br>VALID</div>
+      <span class="ratio">8.6:1 \u2713</span>
+    </div>
+    <div class="sample" style="background:#FFD60A;color:#111;">
+      <div><span class="pair">BG #FFD60A + INK</span><br>VALID</div>
+      <span class="ratio">14.8:1 \u2713</span>
+    </div>
+    <div class="sample" style="background:#15B257;color:#063A1E;">
+      <div><span class="pair">BG #15B257 + GREEN-DEEP</span><br>VALID</div>
+      <span class="ratio">5.7:1 \u2713</span>
+    </div>
+    <div class="sample" style="background:#6B2BD9;color:#F4EFE3;">
+      <div><span class="pair">BG #6B2BD9 + PAPER</span><br>VALID</div>
+      <span class="ratio">6.9:1 \u2713</span>
+    </div>
+    <div class="sample fail" style="background:#FFD60A;color:#F4EFE3;">
+      <div><span class="pair" style="color:#C61F12">BG #FFD60A + PAPER</span><br>REJECTED</div>
+    </div>
+  </div>
+</div></body></html>

@@ -33,10 +33,17 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "studio/schemaTypes/**/*.ts",
+    "studio/components/**/*.tsx",
+    "studio/lib/**/*.ts",
+    "studio/structure.ts"
   ],
   "exclude": [
     "node_modules",
-    "studio"
+    "studio/node_modules",
+    "studio/dist",
+    "studio/sanity.config.ts",
+    "studio/sanity.cli.ts"
   ]
 }

@@ -27,6 +27,13 @@ export const postType = defineType({
       type: 'image',
     }),
     defineField({
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'text',
+      rows: 2,
+      description: 'Short blurb shown under the title in the blog index.',
+    }),
+    defineField({
       name: 'body',
       type: 'array',
       of: [{type: 'block'}],

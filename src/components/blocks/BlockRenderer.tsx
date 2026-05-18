@@ -1,89 +1,162 @@
-import { PortableText } from "next-sanity";
+import { PortableText, type PortableTextComponents } from "next-sanity";
 import { urlFor } from "@/sanity/image";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 interface BlockRendererProps {
   blocks: any[];
 }
 
+// ---------- Design-system maps ----------
+
+// Map design-system type-scale tokens to CSS variable names.
+// Also accepts legacy Tailwind-named values (sm/md/lg/...) for back-compat.
 const fontSizeMap: Record<string, string> = {
-  sm: "text-sm",
-  md: "text-base",
-  lg: "text-lg",
-  xl: "text-xl",
-  "2xl": "text-2xl",
-  "3xl": "text-3xl",
-  "4xl": "text-4xl",
-  "5xl": "text-5xl",
-  "6xl": "text-6xl",
+  "t-12": "var(--t-12)",
+  "t-14": "var(--t-14)",
+  "t-16": "var(--t-16)",
+  "t-18": "var(--t-18)",
+  "t-20": "var(--t-20)",
+  "t-24": "var(--t-24)",
+  "t-32": "var(--t-32)",
+  "t-44": "var(--t-44)",
+  "t-60": "var(--t-60)",
+  "t-84": "var(--t-84)",
+  "t-120": "var(--t-120)",
+  // Legacy aliases
+  sm: "var(--t-14)",
+  md: "var(--t-16)",
+  lg: "var(--t-18)",
+  xl: "var(--t-20)",
+  "2xl": "var(--t-24)",
+  "3xl": "var(--t-32)",
+  "4xl": "var(--t-44)",
+  "5xl": "var(--t-60)",
+  "6xl": "var(--t-84)",
 };
 
-const fontWeightMap: Record<string, string> = {
-  normal: "font-normal",
-  medium: "font-medium",
-  semibold: "font-semibold",
-  bold: "font-bold",
+const fontFamilyMap: Record<string, string> = {
+  sans: "var(--font-sans)",
+  serif: "var(--font-serif)",
+  mono: "var(--font-mono)",
+  display: "var(--font-display)",
 };
 
-const textTransformMap: Record<string, string> = {
-  none: "",
+const fontWeightMap: Record<string, number> = {
+  normal: 400,
+  medium: 500,
+  semibold: 700,
+  bold: 800,
+};
+
+const textAlignMap: Record<string, "left" | "center" | "right"> = {
+  left: "left",
+  center: "center",
+  right: "right",
+};
+
+const textTransformMap: Record<
+  string,
+  "none" | "uppercase" | "lowercase" | "capitalize"
+> = {
+  none: "none",
   uppercase: "uppercase",
   lowercase: "lowercase",
   capitalize: "capitalize",
 };
 
-const textAlignMap: Record<string, string> = {
-  left: "text-left",
-  center: "text-center",
-  right: "text-right",
-};
-
 const spacerHeightMap: Record<string, string> = {
-  xs: "h-4",
-  sm: "h-8",
-  md: "h-16",
-  lg: "h-24",
-  xl: "h-32",
+  xs: "var(--space-4)",
+  sm: "var(--space-6)",
+  md: "var(--space-8)",
+  lg: "var(--space-9)",
+  xl: "var(--space-10)",
 };
 
 const colorBlockHeightMap: Record<string, string> = {
-  sm: "h-[100px]",
-  md: "h-[200px]",
-  lg: "h-[300px]",
-  xl: "h-[400px]",
-  full: "h-screen",
+  sm: "100px",
+  md: "200px",
+  lg: "300px",
+  xl: "400px",
+  full: "100vh",
 };
 
 const paddingMap: Record<string, string> = {
-  none: "p-0",
-  sm: "p-4",
-  md: "p-8",
-  lg: "p-12",
+  none: "0",
+  sm: "var(--space-4)",
+  md: "var(--space-6)",
+  lg: "var(--space-7)",
 };
 
 const maxWidthMap: Record<string, string> = {
-  full: "max-w-full",
-  "7xl": "max-w-7xl",
-  "5xl": "max-w-5xl",
-  "3xl": "max-w-3xl",
-  xl: "max-w-xl",
+  full: "100%",
+  "7xl": "80rem",
+  "5xl": "64rem",
+  "3xl": "48rem",
+  xl: "36rem",
 };
 
-const alignMap: Record<string, string> = {
-  left: "mr-auto",
-  center: "mx-auto",
-  right: "ml-auto",
+const alignMap: Record<string, CSSProperties> = {
+  left: { marginRight: "auto", marginLeft: 0 },
+  center: { marginLeft: "auto", marginRight: "auto" },
+  right: { marginLeft: "auto", marginRight: 0 },
 };
 
-function resolve(map: Record<string, string>, value: string | undefined, fallback: string): string {
-  return (value && map[value]) ?? fallback;
+function pick<T>(
+  map: Record<string, T>,
+  value: string | undefined,
+  fallback: T,
+): T {
+  if (value && value in map) return map[value];
+  return fallback;
 }
 
-function getLayoutClasses(block: any, defaultMaxWidth: string, defaultAlign: string = "center") {
-  const maxWidth = resolve(maxWidthMap, block.maxWidth, maxWidthMap[defaultMaxWidth]);
-  const align = resolve(alignMap, block.alignment, alignMap[defaultAlign]);
-  return `${maxWidth} ${align}`;
+function layoutStyle(
+  block: { maxWidth?: string; alignment?: string },
+  defaultMaxWidth: string,
+  defaultAlign: keyof typeof alignMap = "center",
+): CSSProperties {
+  return {
+    width: "100%",
+    maxWidth: pick(maxWidthMap, block.maxWidth, maxWidthMap[defaultMaxWidth]),
+    ...pick(alignMap, block.alignment, alignMap[defaultAlign]),
+  };
 }
+
+// ---------- PortableText component overrides ----------
+// Apply design-system styling inside rich text (links, marks, headings,
+// blockquotes). Bare `<p>` falls through to the body styles in bxrs-tokens.css.
+const portableComponents: PortableTextComponents = {
+  block: {
+    h2: ({ children }) => <h2>{children}</h2>,
+    h3: ({ children }) => <h3>{children}</h3>,
+    h4: ({ children }) => <h4>{children}</h4>,
+    blockquote: ({ children }) => <blockquote>{children}</blockquote>,
+  },
+  marks: {
+    link: ({ value, children }) => (
+      <a
+        href={value?.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: "var(--link)",
+          textDecoration: "underline",
+          textDecorationThickness: 2,
+          textUnderlineOffset: 3,
+        }}
+      >
+        {children}
+      </a>
+    ),
+    strong: ({ children }) => (
+      <strong style={{ fontWeight: 800 }}>{children}</strong>
+    ),
+    em: ({ children }) => <em>{children}</em>,
+  },
+};
+
+// ---------- Dispatcher ----------
 
 export function BlockRenderer({ blocks }: BlockRendererProps) {
   if (!blocks || blocks.length === 0) return null;
@@ -112,16 +185,30 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
   );
 }
 
+// ---------- Block components ----------
+
 function ImageBlock({ block }: { block: any }) {
   const imageUrl = block.image ? urlFor(block.image)?.url() : null;
   const backgroundColor = block.backgroundColor || "transparent";
-
-  const layout = getLayoutClasses(block, "full");
+  const captionFamily = pick(
+    fontFamilyMap,
+    block.captionFontFamily,
+    fontFamilyMap.mono,
+  );
+  const captionSize = pick(
+    fontSizeMap,
+    block.captionFontSize,
+    "var(--t-12)",
+  );
+  const captionIsMono = (block.captionFontFamily ?? "mono") === "mono";
 
   const content = (
     <div
-      className={`w-full relative ${layout}`}
-      style={{ backgroundColor }}
+      style={{
+        ...layoutStyle(block, "full"),
+        position: "relative",
+        backgroundColor,
+      }}
     >
       {imageUrl && (
         <Image
@@ -129,20 +216,37 @@ function ImageBlock({ block }: { block: any }) {
           alt={block.caption || ""}
           width={1200}
           height={800}
-          className="w-full h-auto"
+          style={{ width: "100%", height: "auto", display: "block" }}
           sizes="100vw"
           priority={false}
         />
       )}
       {block.caption && (
-        <p className="text-sm mt-2 px-4 pb-4">{block.caption}</p>
+        <p
+          style={{
+            fontFamily: captionFamily,
+            fontSize: captionSize,
+            letterSpacing: captionIsMono ? "0.06em" : undefined,
+            textTransform: captionIsMono ? "uppercase" : undefined,
+            color: "var(--fg-3)",
+            margin: 0,
+            padding: "8px 16px 16px",
+          }}
+        >
+          {block.caption}
+        </p>
       )}
     </div>
   );
 
   if (block.link) {
     return (
-      <a href={block.link} target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition-opacity">
+      <a
+        href={block.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bxrs-block-image"
+      >
         {content}
       </a>
     );
@@ -152,63 +256,150 @@ function ImageBlock({ block }: { block: any }) {
 }
 
 function TextBlock({ block }: { block: any }) {
-  const fontSize = resolve(fontSizeMap, block.fontSize, "text-base");
-  const fontWeight = resolve(fontWeightMap, block.fontWeight, "font-normal");
-  const textTransform = resolve(textTransformMap, block.textTransform, "");
-  const textAlign = resolve(textAlignMap, block.textAlign, "text-left");
+  const fontFamilyValue = block.fontFamily ?? "sans";
+  const fontFamily = pick(fontFamilyMap, fontFamilyValue, fontFamilyMap.sans);
+  const fontSize = pick(fontSizeMap, block.fontSize, "var(--t-16)");
+  const fontWeight = pick(fontWeightMap, block.fontWeight, 400);
+  const textTransform = pick(textTransformMap, block.textTransform, "none");
+  const textAlign = pick(textAlignMap, block.textAlign, "left");
   const backgroundColor = block.backgroundColor || "transparent";
 
-  const layout = getLayoutClasses(block, "3xl");
+  // Serif fontFamily implies editorial prose: use the .prose class which
+  // already styles links, blockquotes, h2/h3, drop-caps, etc. per design system.
+  const isProse = fontFamilyValue === "serif";
+
+  const baseStyle: CSSProperties = {
+    ...layoutStyle(block, "3xl"),
+    padding: "var(--space-7) var(--space-6)",
+    backgroundColor,
+    textAlign,
+    textTransform,
+  };
+
+  if (isProse) {
+    return (
+      <div style={baseStyle}>
+        <div className="prose">
+          {block.content && (
+            <PortableText
+              value={block.content}
+              components={portableComponents}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      className={`w-full p-8 ${fontSize} ${fontWeight} ${textTransform} ${textAlign} ${layout}`.trim()}
-      style={{ backgroundColor }}
+      className="bxrs-textblock"
+      style={{
+        ...baseStyle,
+        fontFamily,
+        fontSize,
+        fontWeight,
+        lineHeight: "var(--lh-body)",
+      }}
     >
-      {block.content && <PortableText value={block.content} />}
+      {block.content && (
+        <PortableText value={block.content} components={portableComponents} />
+      )}
     </div>
   );
 }
 
 function LinkBlock({ block }: { block: any }) {
   const backgroundColor = block.backgroundColor || "transparent";
-
-  const layout = getLayoutClasses(block, "3xl");
+  const titleFamily = pick(
+    fontFamilyMap,
+    block.titleFontFamily,
+    fontFamilyMap.sans,
+  );
+  const titleSize = pick(fontSizeMap, block.titleFontSize, "var(--t-24)");
+  const descFamily = pick(
+    fontFamilyMap,
+    block.descriptionFontFamily,
+    fontFamilyMap.mono,
+  );
+  const descSize = pick(
+    fontSizeMap,
+    block.descriptionFontSize,
+    "var(--t-12)",
+  );
+  const descIsMono = (block.descriptionFontFamily ?? "mono") === "mono";
 
   return (
-    <div
-      className={`w-full p-8 hover:opacity-90 transition-opacity ${layout}`}
-      style={{ backgroundColor }}
+    <a
+      href={block.url}
+      target={block.openInNewTab ? "_blank" : "_self"}
+      rel={block.openInNewTab ? "noopener noreferrer" : ""}
+      className="bxrs-block-link"
+      style={{
+        ...layoutStyle(block, "3xl"),
+        padding: "var(--space-6)",
+        backgroundColor,
+      }}
     >
-      <a
-        href={block.url}
-        target={block.openInNewTab ? "_blank" : "_self"}
-        rel={block.openInNewTab ? "noopener noreferrer" : ""}
-        className="block"
+      <h3
+        style={{
+          fontFamily: titleFamily,
+          fontSize: titleSize,
+          marginBottom: 8,
+        }}
       >
-        <h3 className="text-xl font-bold mb-2">{block.title}</h3>
-        {block.description && <p className="text-sm">{block.description}</p>}
-      </a>
-    </div>
+        {block.title}
+        <span style={{ marginLeft: 8 }}>↗</span>
+      </h3>
+      {block.description && (
+        <p
+          style={{
+            fontFamily: descFamily,
+            fontSize: descSize,
+            letterSpacing: descIsMono ? "0.04em" : undefined,
+            margin: 0,
+            color: "var(--fg-3)",
+            textTransform: descIsMono ? "uppercase" : undefined,
+          }}
+        >
+          {block.description}
+        </p>
+      )}
+    </a>
   );
 }
 
 function HeadingBlock({ block }: { block: any }) {
-  const HeadingTag = (block.level || "h2") as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-  const fontSize = resolve(fontSizeMap, block.fontSize, "text-2xl");
-  const fontWeight = resolve(fontWeightMap, block.fontWeight, "font-bold");
-  const textTransform = resolve(textTransformMap, block.textTransform, "");
-  const textAlign = resolve(textAlignMap, block.textAlign, "text-left");
+  const level = (block.level || "h2") as "h1" | "h2" | "h3" | "h4";
+  const HeadingTag = level;
   const backgroundColor = block.backgroundColor || "transparent";
-
-  const layout = getLayoutClasses(block, "7xl");
+  const textAlign = pick(textAlignMap, block.textAlign, "left");
+  const textTransform = block.textTransform
+    ? pick(textTransformMap, block.textTransform, "uppercase")
+    : undefined;
+  const fontSizeOverride = block.fontSize
+    ? pick(fontSizeMap, block.fontSize, undefined as unknown as string)
+    : undefined;
+  const fontFamilyOverride = block.fontFamily
+    ? pick(fontFamilyMap, block.fontFamily, undefined as unknown as string)
+    : undefined;
 
   return (
     <div
-      className={`w-full p-8 ${textAlign} ${layout}`}
-      style={{ backgroundColor }}
+      style={{
+        ...layoutStyle(block, "7xl"),
+        padding: "var(--space-7) var(--space-6)",
+        backgroundColor,
+        textAlign,
+      }}
     >
-      <HeadingTag className={`${fontSize} ${fontWeight} ${textTransform}`.trim()}>
+      <HeadingTag
+        style={{
+          ...(fontSizeOverride ? { fontSize: fontSizeOverride } : {}),
+          ...(fontFamilyOverride ? { fontFamily: fontFamilyOverride } : {}),
+          ...(textTransform ? { textTransform } : {}),
+        }}
+      >
         {block.text}
       </HeadingTag>
     </div>
@@ -216,24 +407,31 @@ function HeadingBlock({ block }: { block: any }) {
 }
 
 function ColorBlock({ block }: { block: any }) {
-  const height = resolve(colorBlockHeightMap, block.height, "h-[200px]");
-  const padding = resolve(paddingMap, block.padding, "p-8");
-  const backgroundColor = block.backgroundColor || "#000000";
-
-  const layout = getLayoutClasses(block, "full");
+  const height = pick(colorBlockHeightMap, block.height, "200px");
+  const padding = pick(paddingMap, block.padding, "var(--space-6)");
+  const backgroundColor = block.backgroundColor || "var(--bxrs-ink)";
 
   return (
     <div
-      className={`w-full ${height} ${padding} ${layout}`.trim()}
-      style={{ backgroundColor }}
+      style={{
+        ...layoutStyle(block, "full"),
+        height,
+        padding,
+        backgroundColor,
+      }}
     />
   );
 }
 
 function SpacerBlock({ block }: { block: any }) {
-  const height = resolve(spacerHeightMap, block.height, "h-16");
+  const height = pick(spacerHeightMap, block.height, "var(--space-8)");
 
-  const layout = getLayoutClasses(block, "full");
-
-  return <div className={`w-full ${height} ${layout}`.trim()} />;
+  return (
+    <div
+      style={{
+        ...layoutStyle(block, "full"),
+        height,
+      }}
+    />
+  );
 }

@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 28px; gap: 10px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.figure { display: flex; flex-direction: column; gap: 6px; }
+.img {
+  aspect-ratio: 4/3;
+  background-size: cover; background-position: center;
+  border: 0; /* no borders on images */
+}
+.cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+/* CSS-painted "film" stand-ins so this card is self-contained */
+.warm  { background: linear-gradient(135deg, #C9A56B, #6B4630 60%, #2B1A10); filter: saturate(0.85) brightness(0.95); }
+.cool  { background: linear-gradient(120deg, #4A6B7A, #29363F 55%, #0E1418); filter: saturate(0.8); }
+.bw    { background: linear-gradient(135deg, #C9C5BC, #4A4842 55%, #1A1916); filter: grayscale(1) contrast(1.05); }
+</style></head>
+<body><div class="card">
+  <div class="title">Imagery — warm film-leaning color or B&amp;W · no filters, no rounded corners, no borders</div>
+  <div class="row">
+    <div class="figure">
+      <div class="img warm"></div>
+      <span class="cap">PORTRA-LEANING · NO HDR</span>
+    </div>
+    <div class="figure">
+      <div class="img cool"></div>
+      <span class="cap">COOL, SLIGHTLY DESATURATED</span>
+    </div>
+    <div class="figure">
+      <div class="img bw"></div>
+      <span class="cap">B&amp;W · NEVER SEPIA</span>
+    </div>
+  </div>
+</div></body></html>

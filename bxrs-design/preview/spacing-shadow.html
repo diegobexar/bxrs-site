@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 32px 32px 40px; gap: 14px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.row { display: flex; gap: 36px; align-items: flex-start; padding-bottom: 18px; }
+.tile {
+  width: 120px; height: 120px;
+  background: #FFD60A;
+  border: 2px solid var(--bxrs-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans); font-weight: 800; text-transform: uppercase; font-size: 13px; color: var(--bxrs-ink);
+}
+.t1 { box-shadow: 4px 4px 0 var(--bxrs-ink); }
+.t2 { box-shadow: 8px 8px 0 var(--bxrs-ink); background:#FF3B2E; color:#111; }
+.t3 { box-shadow: 14px 14px 0 var(--bxrs-ink); background:#1442FF; color:#fff; }
+.cap { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+</style></head>
+<body><div class="card">
+  <div class="title">Signature card style — hard offset, no blur, ink-colored</div>
+  <div class="row">
+    <div><div class="tile t1">CARD</div><div class="cap"><span class="lab">SHADOW-POSTER</span><span class="lab">4 4 0</span></div></div>
+    <div><div class="tile t2">FEATURE</div><div class="cap"><span class="lab">SHADOW-POSTER-L</span><span class="lab">8 8 0</span></div></div>
+    <div><div class="tile t3">HERO</div><div class="cap"><span class="lab">SHADOW-POSTER-XL</span><span class="lab">14 14 0</span></div></div>
+  </div>
+</div></body></html>

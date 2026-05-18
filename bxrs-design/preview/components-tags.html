@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 28px; gap: 14px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border: 1.5px solid var(--bxrs-ink);
+  border-radius: 999px;
+  background: var(--bxrs-paper-2);
+  color: var(--bxrs-ink);
+}
+.chip.solid { background: var(--bxrs-ink); color: var(--bxrs-paper); }
+.chip.red { background:#FF3B2E; color:#111; border-color:#111; }
+.chip.blue { background:#1442FF; color:#fff; border-color:#111; }
+.metarow { display: flex; gap: 18px; align-items: center; padding-top: 8px; border-top: 1px solid #00000018; }
+.metarow .m { font-family: var(--font-mono); font-size: 11px; color: var(--bxrs-ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.metarow .m strong { color: var(--bxrs-ink); font-weight: 500; }
+</style></head>
+<body><div class="card">
+  <div class="title">Tag chips (pill, by exception) and post metadata row</div>
+  <div class="row">
+    <div class="chip">PAINTING</div>
+    <div class="chip">FILM</div>
+    <div class="chip">PRINT</div>
+    <div class="chip solid">2024</div>
+    <div class="chip red">FEATURED</div>
+    <div class="chip blue">NEW</div>
+  </div>
+  <div class="metarow">
+    <span class="m"><strong>POSTED</strong> · 14 MAR 2024</span>
+    <span class="m"><strong>READ</strong> · 6 MIN</span>
+    <span class="m"><strong>FILED</strong> · STUDIO NOTES</span>
+    <span class="m" style="margin-left:auto;">↗ SHARE</span>
+  </div>
+</div></body></html>

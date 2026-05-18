@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+html, body { background: var(--bxrs-paper); }
+.card { padding: 0; min-height: 0; }
+.hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 2px solid var(--bxrs-ink);
+  background: var(--bxrs-paper);
+}
+.wm { font-family: var(--font-display); font-size: 28px; text-transform: uppercase; letter-spacing: -0.005em; color: var(--bxrs-ink); }
+.nav { display: flex; gap: 28px; align-items: center; }
+.nav a {
+  font-family: var(--font-sans); font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--bxrs-ink); text-decoration: none;
+  position: relative;
+}
+.nav a.active::after { content:""; position:absolute; left:0; right:0; bottom:-6px; height:2px; background: var(--bxrs-ink); }
+.nav a:hover { color: #1442FF; }
+.sub {
+  padding: 12px 28px;
+  display: flex; gap: 16px; align-items: center;
+  border-bottom: 1px solid #00000018;
+  background: var(--bxrs-paper);
+}
+.sub .meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.sub .crumb { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--bxrs-ink); text-transform: uppercase; }
+.sub .crumb a { color: var(--bxrs-ink-3); text-decoration: none; }
+</style></head>
+<body><div class="card">
+  <div class="hdr">
+    <div class="wm">BXRS.ART</div>
+    <nav class="nav">
+      <a href="#" class="active">WORK</a>
+      <a href="#">FILM</a>
+      <a href="#">BLOG</a>
+      <a href="#">ABOUT</a>
+      <a href="#">CONTACT</a>
+    </nav>
+  </div>
+  <div class="sub">
+    <span class="crumb"><a href="#">WORK</a> / FIELD RECORDINGS</span>
+    <span class="meta" style="margin-left:auto;">22 PIECES · 2022–2024</span>
+  </div>
+</div></body></html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 28px; gap: 12px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tile {
+  aspect-ratio: 1;
+  border: 2px solid var(--bxrs-ink);
+  padding: 14px 16px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.tile:hover { transform: translate(1px,1px); box-shadow: 3px 3px 0 var(--bxrs-ink) !important; }
+.idx { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; opacity: 0.7; }
+.tt { font-family: var(--font-sans); font-weight: 900; text-transform: uppercase; font-size: 19px; line-height: 0.95; letter-spacing: -0.01em; }
+.desc { font-family: var(--font-sans); font-size: 11px; line-height: 1.3; opacity: 0.78; margin-top: 4px; }
+</style></head>
+<body><div class="card">
+  <div class="title">Homepage project tiles — each card sets bg + fg per project in Sanity</div>
+  <div class="grid">
+    <div class="tile" style="background:#FF3B2E;color:#111;box-shadow:4px 4px 0 var(--bxrs-ink);">
+      <div class="idx">01 · 2024</div>
+      <div><div class="tt">FIELD<br>RECORDINGS</div><div class="desc">Twenty-two oil paintings, kitchen to basement.</div></div>
+    </div>
+    <div class="tile" style="background:#111;color:#FFD60A;box-shadow:4px 4px 0 var(--bxrs-ink);">
+      <div class="idx">02 · 2023</div>
+      <div><div class="tt">NIGHT<br>SHIFT</div><div class="desc">Short film, 14 min.</div></div>
+    </div>
+    <div class="tile" style="background:#FFD60A;color:#111;box-shadow:4px 4px 0 var(--bxrs-ink);">
+      <div class="idx">03 · 2023</div>
+      <div><div class="tt">SUNROOM</div><div class="desc">Print edition of 40.</div></div>
+    </div>
+    <div class="tile" style="background:#1442FF;color:#F4EFE3;box-shadow:4px 4px 0 var(--bxrs-ink);">
+      <div class="idx">04 · 2022</div>
+      <div><div class="tt">COLD<br>OPEN</div><div class="desc">Drawings on graph paper.</div></div>
+    </div>
+  </div>
+</div></body></html>

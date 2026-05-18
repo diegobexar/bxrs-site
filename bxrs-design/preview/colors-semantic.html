@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 18px 24px; gap: 6px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; margin-bottom: 4px; }
+.row { display: grid; grid-template-columns: 140px 110px 1fr; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid #00000018; }
+.row:last-child { border: 0; }
+.tok { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; }
+.dot { width: 28px; height: 28px; border: 1.5px solid var(--bxrs-ink); }
+.use { font-family: var(--font-mono); font-size: 11px; color: var(--bxrs-ink-3); }
+</style></head>
+<body><div class="card">
+  <div class="title">Semantic role → token. Reference these in product code, not raw hex.</div>
+  <div class="row"><div class="tok">--bg</div><div class="dot" style="background:#F4EFE3"></div><div class="use">page background</div></div>
+  <div class="row"><div class="tok">--bg-elevated</div><div class="dot" style="background:#ECE5D2"></div><div class="use">cards, wells, input fields</div></div>
+  <div class="row"><div class="tok">--fg</div><div class="dot" style="background:#111"></div><div class="use">primary text, borders</div></div>
+  <div class="row"><div class="tok">--fg-3</div><div class="dot" style="background:#6E6A60"></div><div class="use">metadata, captions</div></div>
+  <div class="row"><div class="tok">--accent</div><div class="dot" style="background:#FF3B2E"></div><div class="use">primary action, highlights</div></div>
+  <div class="row"><div class="tok">--link</div><div class="dot" style="background:#1442FF"></div><div class="use">inline links in prose</div></div>
+  <div class="row"><div class="tok">--link-visited</div><div class="dot" style="background:#6B2BD9"></div><div class="use">visited blog links</div></div>
+</div></body></html>

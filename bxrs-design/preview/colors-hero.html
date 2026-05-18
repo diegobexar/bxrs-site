@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 24px; gap: 14px; }
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1; }
+.sw {
+  aspect-ratio: 1;
+  border: 2px solid var(--bxrs-ink);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 8px 10px;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--bxrs-ink);
+}
+.sw .name { font-family: var(--font-sans); font-weight: 800; text-transform: uppercase; font-size: 13px; letter-spacing: 0; }
+.sw .hex { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; margin-top: 2px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+</style></head>
+<body><div class="card">
+  <div class="title">5 hero primaries · solid fields, no gradients</div>
+  <div class="grid">
+    <div class="sw" style="background:#FF3B2E; color:#111;"><div class="name">RED</div><div class="hex">#FF3B2E</div></div>
+    <div class="sw" style="background:#FFD60A; color:#111;"><div class="name">YELLOW</div><div class="hex">#FFD60A</div></div>
+    <div class="sw" style="background:#1442FF; color:#fff;"><div class="name">BLUE</div><div class="hex">#1442FF</div></div>
+    <div class="sw" style="background:#15B257; color:#111;"><div class="name">GREEN</div><div class="hex">#15B257</div></div>
+    <div class="sw" style="background:#6B2BD9; color:#fff;"><div class="name">VIOLET</div><div class="hex">#6B2BD9</div></div>
+  </div>
+</div></body></html>

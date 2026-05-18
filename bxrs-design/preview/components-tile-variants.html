@@ -1,0 +1,113 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 20px 22px; gap: 12px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.t {
+  aspect-ratio: 1;
+  border: 2px solid var(--bxrs-ink);
+  box-shadow: 3px 3px 0 var(--bxrs-ink);
+  position: relative; overflow: hidden;
+  container-type: inline-size;
+}
+.top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.78; }
+.ttl { font-family: var(--font-sans); font-weight: 900; text-transform: uppercase; line-height: 0.95; letter-spacing: -0.01em; font-size: 14px; }
+.lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em; color: var(--bxrs-ink); text-transform: uppercase; margin-top: 4px; }
+
+/* 1: color */
+.v1 { background:#FF3B2E; color:#111; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-between; }
+
+/* 2: image-bleed */
+.v2 { background: linear-gradient(150deg,#3A2418,#14110C 65%,#000); color:#FFD60A; }
+.v2::after {
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(180deg, transparent 0%, #111 95%);
+}
+.v2 .ov { position:absolute; inset:0; z-index:1; padding:8px 10px; display:flex; flex-direction:column; justify-content:space-between; }
+
+/* 3: image-bar */
+.v3 { display: grid; grid-template-rows: 62% 38%; background:#1442FF; color:#F4EFE3; }
+.v3 .img { background: linear-gradient(150deg,#9DAAE6,#3A4FA8 65%,#0A1F8A); border-bottom: 2px solid #111; }
+.v3 .bar { padding: 6px 10px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+
+/* 4: image-corner */
+.v4 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; background:#15B257; color:#063A1E; }
+.v4 .ci { grid-column: 2; grid-row: 1; background: linear-gradient(140deg,#5AB370,#0B6A33); border-left: 2px solid #111; border-bottom: 2px solid #111; z-index:1; }
+.v4 .ct { grid-column: 1 / span 2; grid-row: 1 / span 2; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-between; z-index: 0; }
+.v4 .ct .bottom { align-self: flex-start; max-width: 90%; }
+
+/* 5: type-only */
+.v5 { background:#FFD60A; color:#111; padding: 8px 10px; display: grid; grid-template-rows: auto 1fr auto; gap: 4px; }
+.v5 svg { width: 100%; height: auto; align-self: center; display: block; }
+
+/* 6: video */
+.v6 { background:#6B2BD9; color:#F4EFE3; }
+.v6 .bg { position: absolute; inset: 0; background: linear-gradient(140deg,#4A2A80,#1A0E40); }
+.v6::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent 0%, transparent 55%, #6B2BD9 95%); }
+.v6 .ov { position:absolute; inset:0; z-index:1; padding: 8px 10px; display:grid; grid-template-rows: auto 1fr auto; }
+.v6 .play { width: 38px; height: 38px; border-radius: 999px; background: #F4EFE3; display: flex; align-items:center; justify-content:center; justify-self:center; align-self:center; }
+.v6 .tag { display: inline-flex; align-items: center; gap: 4px; }
+</style></head>
+<body><div class="card">
+  <div class="title">Six tile variants \u2014 chosen per project via <strong style="color:var(--bxrs-ink)">tileVariant</strong> in Sanity</div>
+  <div class="grid">
+    <div>
+      <div class="t v1">
+        <div class="top"><span>01</span><span>'24</span></div>
+        <div><div class="ttl">FIELD<br>REC.</div></div>
+      </div>
+      <div class="lbl">COLOR</div>
+    </div>
+    <div>
+      <div class="t v2">
+        <div class="ov">
+          <div class="top"><span>02</span><span>'23</span></div>
+          <div><div class="ttl">NIGHT SHIFT</div></div>
+        </div>
+      </div>
+      <div class="lbl">IMAGE-BLEED</div>
+    </div>
+    <div>
+      <div class="t v3">
+        <div class="img"></div>
+        <div class="bar">
+          <div class="top"><span>04</span><span>'22</span></div>
+          <div><div class="ttl">COLD OPEN</div></div>
+        </div>
+      </div>
+      <div class="lbl">IMAGE-BAR</div>
+    </div>
+    <div>
+      <div class="t v4">
+        <div class="ci"></div>
+        <div class="ct">
+          <div class="top"><span>05</span><span>'22</span></div>
+          <div class="bottom"><div class="ttl">SOFT TARGETS</div></div>
+        </div>
+      </div>
+      <div class="lbl">IMAGE-CORNER</div>
+    </div>
+    <div>
+      <div class="t v5">
+        <div class="top"><span>03</span><span>'23</span></div>
+        <svg viewBox="0 0 100 22" preserveAspectRatio="xMidYMid meet"><text x="0" y="18" textLength="100" lengthAdjust="spacingAndGlyphs" font-family="Archivo, sans-serif" font-weight="900" font-size="20" letter-spacing="-0.4" fill="#111">SUNROOM</text></svg>
+        <div style="font-size:8px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;opacity:0.7;">Edition of 40.</div>
+      </div>
+      <div class="lbl">TYPE-ONLY</div>
+    </div>
+    <div>
+      <div class="t v6">
+        <div class="bg"></div>
+        <div class="ov">
+          <div class="top"><span class="tag"><svg viewBox="0 0 24 24" width="7" height="7" fill="currentColor"><polygon points="6,3 22,12 6,21"/></svg> VIDEO · 22:08</span><span>'21</span></div>
+          <div class="play"><svg viewBox="0 0 24 24" width="14" height="14" style="fill:#6B2BD9"><polygon points="6,3 22,12 6,21"/></svg></div>
+          <div><div class="ttl">THE PRINTER</div></div>
+        </div>
+      </div>
+      <div class="lbl">VIDEO</div>
+    </div>
+  </div>
+</div></body></html>

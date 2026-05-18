@@ -1,24 +1,36 @@
-import Link from "next/link";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
+import { Tile, type TileProject } from "@/components/Tile";
 import type { Metadata } from "next";
-import type {
-  PINNED_PROJECTS_QUERY_RESULT,
-  FEATURED_PROJECTS_QUERY_RESULT,
-} from "@/sanity/sanity.types";
 
-export const metadata: Metadata = {
-  title: "BXRS - Portfolio",
-  description: "Creative portfolio and projects",
-};
+const HOMEPAGE_INTRO_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
+  siteDescription
+}`);
+
+export async function generateMetadata(): Promise<Metadata> {
+  const intro = await client.fetch(
+    HOMEPAGE_INTRO_QUERY,
+    {},
+    { next: { revalidate: 30 } },
+  );
+  return {
+    title: "BXRS — Work",
+    description: intro?.siteDescription ?? undefined,
+  };
+}
 
 const PROJECT_CARD_PROJECTION = `{
   _id,
   title,
   slug,
-  shortDescription,
-  cardBackgroundColor,
+  description,
+  "cardBackgroundColor": cardBackgroundColor.hex,
   cardTextColor,
+  tileVariant,
+  videoDuration,
+  year,
+  categories,
+  "tileImageUrl": tileImage.asset->url,
   order
 }`;
 
@@ -38,57 +50,55 @@ const FEATURED_PROJECTS_QUERY = defineQuery(`*[
 const options = { next: { revalidate: 30 } };
 
 export default async function IndexPage() {
-  const [pinnedProjects, featuredProjects] = await Promise.all([
+  const [pinnedProjects, featuredProjects, intro] = await Promise.all([
     client.fetch(PINNED_PROJECTS_QUERY, {}, options),
     client.fetch(FEATURED_PROJECTS_QUERY, {}, options),
+    client.fetch(HOMEPAGE_INTRO_QUERY, {}, options),
   ]);
 
+  const headlineLines = intro?.siteDescription?.split("\n") ?? [];
+
   return (
-    <main className="container mx-auto min-h-screen max-w-7xl p-8">
+    <main className="home">
+      {headlineLines.length > 0 && (
+        <div className="intro">
+          <h1>
+            {headlineLines.map((line, i) => (
+              <span key={i} style={{ display: "block" }}>
+                {line}
+              </span>
+            ))}
+          </h1>
+        </div>
+      )}
+
       {pinnedProjects.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {pinnedProjects.map((project) => (
-            <ProjectCard key={project._id} project={project} />
+        <div className="tile-grid pinned">
+          {pinnedProjects.map((project, i) => (
+            <Tile
+              key={project._id}
+              project={project as TileProject}
+              index={i}
+            />
           ))}
         </div>
       )}
 
       {featuredProjects.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {featuredProjects.map((project) => (
-            <ProjectCard key={project._id} project={project} />
+        <div className="tile-grid">
+          {featuredProjects.map((project, i) => (
+            <Tile
+              key={project._id}
+              project={project as TileProject}
+              index={pinnedProjects.length + i}
+            />
           ))}
         </div>
       )}
 
       {pinnedProjects.length === 0 && featuredProjects.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-lg text-foreground/60">No projects to display yet.</p>
-        </div>
+        <p className="eyebrow">No projects to display yet.</p>
       )}
     </main>
-  );
-}
-
-type ProjectCardData =
-  | PINNED_PROJECTS_QUERY_RESULT[number]
-  | FEATURED_PROJECTS_QUERY_RESULT[number];
-
-function ProjectCard({ project }: { project: ProjectCardData }) {
-  const backgroundColor = project.cardBackgroundColor || "#FFFFFF";
-  const textColor = project.cardTextColor || "#000000";
-
-  return (
-    <Link href={`/projx/${project.slug?.current}`}>
-      <div
-        className="aspect-square p-8 flex flex-col justify-center items-center text-center hover:opacity-90 transition-opacity"
-        style={{ backgroundColor, color: textColor }}
-      >
-        <h2 className="text-2xl font-bold uppercase mb-4">{project.title}</h2>
-        {project.shortDescription && (
-          <p className="text-sm">{project.shortDescription}</p>
-        )}
-      </div>
-    </Link>
   );
 }

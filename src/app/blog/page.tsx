@@ -1,33 +1,59 @@
 import Link from "next/link";
 import { defineQuery } from "next-sanity";
-
 import { client } from "@/sanity/client";
 
 const POSTS_QUERY = defineQuery(`*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`);
+]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}`);
 
 const options = { next: { revalidate: 30 } };
+
+function formatDate(iso?: string | null): string {
+  if (!iso) return "";
+  return new Date(iso)
+    .toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+    .toUpperCase();
+}
 
 export default async function BlogPage() {
   const posts = await client.fetch(POSTS_QUERY, {}, options);
 
   return (
-    <main className="container mx-auto min-h-screen max-w-3xl p-8">
-      <h1 className="text-4xl font-bold mb-8">Blog</h1>
-      <ul className="flex flex-col gap-y-4">
-        {posts.map((post) => (
-          <li className="hover:underline" key={post._id}>
-            <Link href={`/blog/${post.slug?.current}`}>
-              <h2 className="text-xl font-semibold">{post.title}</h2>
-              {post.publishedAt && (
-                <p>{new Date(post.publishedAt).toLocaleDateString()}</p>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <main className="blog-index">
+      <h1>Studio Notes</h1>
+      <p className="lede">Writing on practice, materials, and process.</p>
+
+      {posts.length === 0 ? (
+        <p className="eyebrow">No notes yet.</p>
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {posts.map((post) => (
+            <li key={post._id}>
+              <Link
+                href={`/blog/${post.slug?.current}`}
+                className="post-item"
+                style={{ color: "inherit" }}
+              >
+                <span className="post-date">{formatDate(post.publishedAt)}</span>
+                <span>
+                  <span className="post-title">{post.title}</span>
+                  {post.excerpt && (
+                    <span className="post-blurb" style={{ display: "block" }}>
+                      {post.excerpt}
+                    </span>
+                  )}
+                </span>
+                <span className="post-read">Read ↗</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }

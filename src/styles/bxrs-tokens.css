@@ -1,0 +1,278 @@
+/* ============================================================
+   BXRS.ART — Design system tokens
+   Source: bxrs-design/colors_and_type.css
+   Mirror into src/ so Next/Tailwind can resolve the import.
+   ============================================================ */
+
+@font-face {
+  font-family: "Raygun";
+  src: url("/fonts/RaygunRegular.woff2") format("woff2"),
+       url("/fonts/RaygunRegular.woff") format("woff");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  /* Hero primaries */
+  --bxrs-red:       #FF3B2E;
+  --bxrs-red-deep:  #C61F12;
+  --bxrs-red-wash:  #FFD7D2;
+
+  --bxrs-yellow:       #FFD60A;
+  --bxrs-yellow-deep:  #C9A300;
+  --bxrs-yellow-wash:  #FFF3A8;
+
+  --bxrs-blue:       #1442FF;
+  --bxrs-blue-deep:  #0A1F8A;
+  --bxrs-blue-wash:  #C7D0FF;
+
+  --bxrs-green:       #15B257;
+  --bxrs-green-deep:  #0B6A33;
+  --bxrs-green-wash:  #BFE9CD;
+
+  --bxrs-violet:       #6B2BD9;
+  --bxrs-violet-deep:  #361482;
+  --bxrs-violet-wash:  #D9CCF5;
+
+  /* Paper / ink */
+  --bxrs-paper:   #F4EFE3;
+  --bxrs-paper-2: #ECE5D2;
+  --bxrs-ink:     #111111;
+  --bxrs-ink-2:   #2A2A2A;
+  --bxrs-ink-3:   #6E6A60;
+
+  /* Pure poles */
+  --bxrs-white: #FFFFFF;
+  --bxrs-black: #000000;
+
+  /* Semantic */
+  --bg:           var(--bxrs-paper);
+  --bg-elevated:  var(--bxrs-paper-2);
+  --bg-inverse:   var(--bxrs-ink);
+
+  --fg:           var(--bxrs-ink);
+  --fg-2:         var(--bxrs-ink-2);
+  --fg-3:         var(--bxrs-ink-3);
+  --fg-inverse:   var(--bxrs-paper);
+
+  --accent:        var(--bxrs-red);
+  --accent-deep:   var(--bxrs-red-deep);
+  --accent-2:      var(--bxrs-blue);
+  --accent-2-deep: var(--bxrs-blue-deep);
+
+  --link:         var(--bxrs-blue);
+  --link-hover:   var(--bxrs-blue-deep);
+  --link-visited: var(--bxrs-violet);
+
+  --hairline:         #00000018;
+  --hairline-inverse: #FFFFFF22;
+
+  /* Type families — defaults; next/font sets the actual fonts via
+     --font-archivo / --font-newsreader / --font-jbmono and the @theme
+     block in globals.css aliases those into --font-sans etc. */
+  --font-display: "Raygun", "Archivo Black", system-ui, sans-serif;
+  --font-sans:    var(--font-archivo, "Archivo"), "Helvetica Neue", Arial, sans-serif;
+  --font-serif:   var(--font-newsreader, "Newsreader"), "Source Serif Pro", Georgia, serif;
+  --font-mono:    var(--font-jbmono, "JetBrains Mono"), ui-monospace, Menlo, monospace;
+
+  /* Type scale — major third (1.250), anchored at 16px */
+  --t-12: 0.75rem;
+  --t-14: 0.875rem;
+  --t-16: 1rem;
+  --t-18: 1.125rem;
+  --t-20: 1.25rem;
+  --t-24: 1.5rem;
+  --t-32: 2rem;
+  --t-44: 2.75rem;
+  --t-60: 3.75rem;
+  --t-84: 5.25rem;
+  --t-120: 7.5rem;
+
+  --lh-tight: 0.95;
+  --lh-snug: 1.1;
+  --lh-body: 1.55;
+  --lh-reading: 1.65;
+
+  --ls-display: -0.02em;
+  --ls-ui: 0;
+  --ls-eyebrow: 0.14em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 144px;
+
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 6px;
+  --radius-pill: 999px;
+
+  --border-1: 1px solid var(--fg);
+  --border-2: 2px solid var(--fg);
+  --border-3: 3px solid var(--fg);
+
+  --shadow-poster:    4px 4px 0 var(--fg);
+  --shadow-poster-l:  8px 8px 0 var(--fg);
+  --shadow-poster-xl: 14px 14px 0 var(--fg);
+  --shadow-soft: 0 1px 0 rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.06);
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-snap: cubic-bezier(0.6, 0, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 360ms;
+}
+
+html { color-scheme: light; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.bxrs-wordmark,
+.bxrs-portfolio-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--ls-display);
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+}
+
+h1, .h1 {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: clamp(var(--t-44), 7vw, var(--t-84));
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  margin: 0;
+}
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(var(--t-32), 4vw, var(--t-60));
+  line-height: var(--lh-snug);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--t-24);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+  margin: 0;
+}
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--t-18);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  margin: 0 0 1em;
+}
+
+.prose {
+  font-family: var(--font-serif);
+  font-size: var(--t-20);
+  line-height: var(--lh-reading);
+  color: var(--fg);
+  font-variation-settings: "opsz" 18;
+  max-width: 64ch;
+}
+.prose p { font-family: var(--font-serif); font-size: inherit; line-height: inherit; margin: 0 0 1.1em; }
+.prose h2 {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: var(--t-32);
+  margin: 2em 0 0.5em;
+  letter-spacing: -0.005em;
+}
+.prose h3 {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: var(--t-20);
+  margin: 1.6em 0 0.4em;
+}
+.prose a { color: var(--link); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.prose a:hover { color: var(--link-hover); }
+.prose blockquote {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: var(--t-44);
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  margin: 1.2em 0;
+  padding: 0;
+  border: none;
+  color: var(--accent);
+}
+.prose code, .prose kbd, .prose samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--bxrs-paper-2);
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+}
+.prose img, .prose video { max-width: 100%; display: block; margin: 1.6em 0; }
+.prose figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-3);
+  margin-top: 0.5em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-eyebrow);
+  color: var(--fg-3);
+  font-weight: 500;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  letter-spacing: 0.04em;
+  color: var(--fg-3);
+}
+
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--bxrs-yellow);
+  color: var(--bxrs-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--bxrs-blue);
+  outline-offset: 2px;
+}
