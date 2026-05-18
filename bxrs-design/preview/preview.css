@@ -1,0 +1,37 @@
+/* Preview card shared frame.
+   Each card sits flush — no padding/title chrome; the design system tab
+   wraps the card and shows the asset name. We just supply tokens and fonts. */
+
+@import url("../colors_and_type.css");
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bxrs-paper);
+  color: var(--bxrs-ink);
+  font-family: var(--font-sans);
+  min-height: 100%;
+}
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.row { display: flex; gap: 16px; align-items: stretch; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bxrs-ink-3);
+}
+.token {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--bxrs-ink-2);
+}

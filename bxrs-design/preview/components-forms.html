@@ -1,0 +1,48 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 28px; gap: 14px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+.lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.inp {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 2px solid var(--bxrs-ink);
+  background: var(--bxrs-paper);
+  color: var(--bxrs-ink);
+  outline: none;
+}
+.inp:focus { outline: 3px solid #1442FF; outline-offset: 2px; }
+.subscribe {
+  display: flex; align-items: stretch;
+  border: 2px solid var(--bxrs-ink); background: var(--bxrs-paper);
+  box-shadow: 4px 4px 0 var(--bxrs-ink);
+}
+.subscribe input { flex: 1; border: 0; padding: 10px 12px; background: transparent; font-family: var(--font-sans); font-size: 14px; outline: none; }
+.subscribe button { border: 0; border-left: 2px solid var(--bxrs-ink); padding: 0 18px; background: var(--bxrs-ink); color: var(--bxrs-paper); font-family: var(--font-sans); font-weight: 800; text-transform: uppercase; font-size: 12px; cursor: pointer; }
+</style></head>
+<body><div class="card">
+  <div class="title">Form controls — 2px ink borders, focus = 3px blue ring</div>
+  <div class="row">
+    <div class="field">
+      <span class="lbl">YOUR NAME</span>
+      <input class="inp" value="" placeholder="Type here">
+    </div>
+    <div class="field">
+      <span class="lbl">EMAIL</span>
+      <input class="inp" type="email" value="you@studio.net">
+    </div>
+  </div>
+  <div class="field" style="max-width: 420px;">
+    <span class="lbl">NEWSLETTER · 1 EMAIL / MONTH</span>
+    <div class="subscribe">
+      <input placeholder="you@example.com">
+      <button>SUBSCRIBE →</button>
+    </div>
+  </div>
+</div></body></html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 18px 22px; gap: 8px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; margin-bottom: 4px; }
+.set { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; gap: 8px; align-items: center; }
+.set + .set { margin-top: 6px; }
+.name { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bxrs-ink); font-weight: 500; }
+.chip {
+  height: 44px;
+  border: 1.5px solid var(--bxrs-ink);
+  display: flex; align-items: center; padding: 0 10px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
+}
+.chip .role { opacity: 0.7; font-size: 9px; margin-left: 6px; }
+</style></head>
+<body><div class="card">
+  <div class="title">Each hero ships with a tint (wash) and a darker (deep) — used for surfaces &amp; hover</div>
+  <div class="set">
+    <div class="name">RED</div>
+    <div class="chip" style="background:#FFD7D2;color:#111">WASH<span class="role">#FFD7D2</span></div>
+    <div class="chip" style="background:#FF3B2E;color:#111">MAIN<span class="role">#FF3B2E</span></div>
+    <div class="chip" style="background:#C61F12;color:#fff">DEEP<span class="role">#C61F12</span></div>
+  </div>
+  <div class="set">
+    <div class="name">YELLOW</div>
+    <div class="chip" style="background:#FFF3A8;color:#111">WASH<span class="role">#FFF3A8</span></div>
+    <div class="chip" style="background:#FFD60A;color:#111">MAIN<span class="role">#FFD60A</span></div>
+    <div class="chip" style="background:#C9A300;color:#111">DEEP<span class="role">#C9A300</span></div>
+  </div>
+  <div class="set">
+    <div class="name">BLUE</div>
+    <div class="chip" style="background:#C7D0FF;color:#111">WASH<span class="role">#C7D0FF</span></div>
+    <div class="chip" style="background:#1442FF;color:#fff">MAIN<span class="role">#1442FF</span></div>
+    <div class="chip" style="background:#0A1F8A;color:#fff">DEEP<span class="role">#0A1F8A</span></div>
+  </div>
+  <div class="set">
+    <div class="name">GREEN</div>
+    <div class="chip" style="background:#BFE9CD;color:#111">WASH<span class="role">#BFE9CD</span></div>
+    <div class="chip" style="background:#15B257;color:#111">MAIN<span class="role">#15B257</span></div>
+    <div class="chip" style="background:#0B6A33;color:#fff">DEEP<span class="role">#0B6A33</span></div>
+  </div>
+  <div class="set">
+    <div class="name">VIOLET</div>
+    <div class="chip" style="background:#D9CCF5;color:#111">WASH<span class="role">#D9CCF5</span></div>
+    <div class="chip" style="background:#6B2BD9;color:#fff">MAIN<span class="role">#6B2BD9</span></div>
+    <div class="chip" style="background:#361482;color:#fff">DEEP<span class="role">#361482</span></div>
+  </div>
+</div></body></html>

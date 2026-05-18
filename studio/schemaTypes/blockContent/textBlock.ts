@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {layoutFields, layoutFieldset} from './layoutFields'
+import {fontFamilyField, fontSizeField} from './fontFields'
 
 export const textBlock = defineType({
   name: 'textBlock',
@@ -14,23 +15,18 @@ export const textBlock = defineType({
       of: [{type: 'block'}],
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: 'fontSize',
-      title: 'Font Size',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Small', value: 'sm'},
-          {title: 'Medium', value: 'md'},
-          {title: 'Large', value: 'lg'},
-          {title: 'Extra Large', value: 'xl'},
-          {title: '2XL', value: '2xl'},
-          {title: '3XL', value: '3xl'},
-          {title: '4XL', value: '4xl'},
-        ],
-      },
-      initialValue: 'md',
-    }),
+    fontFamilyField(
+      'fontFamily',
+      'Font Family',
+      'sans',
+      'Sans (Archivo) for UI text · Serif (Newsreader) for prose / long-form · Mono (JetBrains Mono) for metadata · Display (Raygun) for pull quotes only.',
+    ),
+    fontSizeField(
+      'fontSize',
+      'Font Size',
+      't-16',
+      'BXRS type scale. Ignored when Font Family is "Serif" (prose uses its own scale).',
+    ),
     defineField({
       name: 'fontWeight',
       title: 'Font Weight',

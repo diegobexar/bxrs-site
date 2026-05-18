@@ -16,21 +16,8 @@ export const siteSettingsType = defineType({
       title: 'Site Description',
       type: 'text',
       rows: 3,
-      description: 'Brief description for SEO and meta tags',
-    }),
-    defineField({
-      name: 'infoContent',
-      title: 'Info/About Content',
-      type: 'array',
-      description: 'Content for the /info page',
-      of: [
-        {type: 'imageBlock'},
-        {type: 'textBlock'},
-        {type: 'linkBlock'},
-        {type: 'headingBlock'},
-        {type: 'colorBlock'},
-        {type: 'spacerBlock'},
-      ],
+      description:
+        'Shown as the big headline on the homepage and as the default SEO meta description. Use line breaks to split the headline across lines.',
     }),
     defineField({
       name: 'socialLinks',
@@ -56,21 +43,6 @@ export const siteSettingsType = defineType({
       name: 'contactEmail',
       title: 'Contact Email',
       type: 'string',
-    }),
-    defineField({
-      name: 'theme',
-      title: 'Site Theme',
-      type: 'string',
-      description: 'Choose the color scheme for the entire site',
-      options: {
-        list: [
-          {title: 'Light Mode', value: 'light'},
-          {title: 'Dark Mode', value: 'dark'},
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'dark',
-      validation: (rule) => rule.required(),
     }),
   ],
   preview: {

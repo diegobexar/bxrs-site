@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8888 --turbopack",
+    "dev": "next dev -p 6969 --turbopack",
     "dev:all": "concurrently -n web,studio -c cyan,magenta \"npm:dev\" \"npm:studio:dev\"",
     "build": "next build --turbopack",
     "start": "next start",
@@ -16,12 +16,16 @@
     "typegen": "npm run typegen:extract && npm run typegen:generate"
   },
   "dependencies": {
+    "@sanity/color-input": "^6.0.4",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^5.25.1",
     "@tailwindcss/typography": "^0.5.19",
     "next": "16.2.2",
-    "next-sanity": "^12.2.1",
+    "next-sanity": "^12.4.5",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sanity": "^5.25.1",
+    "styled-components": "^6.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

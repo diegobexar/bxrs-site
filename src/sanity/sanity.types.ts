@@ -33,8 +33,19 @@ export type HeadingBlock = {
   _type: "headingBlock";
   text?: string;
   level?: "h1" | "h2" | "h3" | "h4";
-  fontSize?: "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
-  fontWeight?: "normal" | "medium" | "semibold" | "bold";
+  fontFamily?: "sans" | "serif" | "mono" | "display";
+  fontSize?:
+    | "t-12"
+    | "t-14"
+    | "t-16"
+    | "t-18"
+    | "t-20"
+    | "t-24"
+    | "t-32"
+    | "t-44"
+    | "t-60"
+    | "t-84"
+    | "t-120";
   textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
   textAlign?: "left" | "center" | "right";
   backgroundColor?: string;
@@ -48,6 +59,32 @@ export type LinkBlock = {
   url?: string;
   description?: string;
   openInNewTab?: boolean;
+  titleFontFamily?: "sans" | "serif" | "mono" | "display";
+  titleFontSize?:
+    | "t-12"
+    | "t-14"
+    | "t-16"
+    | "t-18"
+    | "t-20"
+    | "t-24"
+    | "t-32"
+    | "t-44"
+    | "t-60"
+    | "t-84"
+    | "t-120";
+  descriptionFontFamily?: "sans" | "serif" | "mono" | "display";
+  descriptionFontSize?:
+    | "t-12"
+    | "t-14"
+    | "t-16"
+    | "t-18"
+    | "t-20"
+    | "t-24"
+    | "t-32"
+    | "t-44"
+    | "t-60"
+    | "t-84"
+    | "t-120";
   backgroundColor?: string;
   maxWidth?: "full" | "7xl" | "5xl" | "3xl" | "xl";
   alignment?: "left" | "center" | "right";
@@ -73,7 +110,19 @@ export type TextBlock = {
     _type: "block";
     _key: string;
   }>;
-  fontSize?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+  fontFamily?: "sans" | "serif" | "mono" | "display";
+  fontSize?:
+    | "t-12"
+    | "t-14"
+    | "t-16"
+    | "t-18"
+    | "t-20"
+    | "t-24"
+    | "t-32"
+    | "t-44"
+    | "t-60"
+    | "t-84"
+    | "t-120";
   fontWeight?: "normal" | "medium" | "semibold" | "bold";
   textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
   textAlign?: "left" | "center" | "right";
@@ -99,10 +148,63 @@ export type ImageBlock = {
     _type: "image";
   };
   caption?: string;
+  captionFontFamily?: "sans" | "serif" | "mono" | "display";
+  captionFontSize?:
+    | "t-12"
+    | "t-14"
+    | "t-16"
+    | "t-18"
+    | "t-20"
+    | "t-24"
+    | "t-32"
+    | "t-44"
+    | "t-60"
+    | "t-84"
+    | "t-120";
   link?: string;
   backgroundColor?: string;
   maxWidth?: "full" | "7xl" | "5xl" | "3xl" | "xl";
   alignment?: "left" | "center" | "right";
+};
+
+export type Info = {
+  _id: string;
+  _type: "info";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  bio?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  contactLabel?: string;
+  contactEmail?: string;
+  stacks?: Array<{
+    heading?: string;
+    rows?: Array<{
+      label?: string;
+      value?: string;
+      _type: "row";
+      _key: string;
+    }>;
+    _type: "stack";
+    _key: string;
+  }>;
 };
 
 export type SiteSettings = {
@@ -113,33 +215,12 @@ export type SiteSettings = {
   _rev: string;
   siteTitle?: string;
   siteDescription?: string;
-  infoContent?: Array<
-    | ({
-        _key: string;
-      } & ImageBlock)
-    | ({
-        _key: string;
-      } & TextBlock)
-    | ({
-        _key: string;
-      } & LinkBlock)
-    | ({
-        _key: string;
-      } & HeadingBlock)
-    | ({
-        _key: string;
-      } & ColorBlock)
-    | ({
-        _key: string;
-      } & SpacerBlock)
-  >;
   socialLinks?: Array<{
     platform?: string;
     url?: string;
     _key: string;
   }>;
   contactEmail?: string;
-  theme?: "light" | "dark";
 };
 
 export type Project = {
@@ -150,13 +231,30 @@ export type Project = {
   _rev: string;
   title?: string;
   slug?: Slug;
-  shortDescription?: string;
+  description?: string;
+  lede?: string;
+  materials?: string;
   showOnHomepage?: boolean;
   pinToTopRow?: boolean;
   order?: number;
-  cardBackgroundColor?: string;
+  tileVariant?:
+    | "color"
+    | "image-bleed"
+    | "image-bar"
+    | "image-corner"
+    | "type-only"
+    | "video";
+  tileImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  videoDuration?: string;
+  cardBackgroundColor?: Color;
   cardTextColor?: string;
-  date?: string;
+  year?: number;
   categories?: Array<string>;
   content?: Array<
     | ({
@@ -205,6 +303,15 @@ export type SanityImageHotspot = {
   width?: number;
 };
 
+export type Color = {
+  _type: "color";
+  hex?: string;
+  alpha?: number;
+  hsl?: HslaColor;
+  hsv?: HsvaColor;
+  rgb?: RgbaColor;
+};
+
 export type Slug = {
   _type: "slug";
   current?: string;
@@ -227,6 +334,7 @@ export type Post = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  excerpt?: string;
   body?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -245,6 +353,30 @@ export type Post = {
     _type: "block";
     _key: string;
   }>;
+};
+
+export type RgbaColor = {
+  _type: "rgbaColor";
+  r?: number;
+  g?: number;
+  b?: number;
+  a?: number;
+};
+
+export type HsvaColor = {
+  _type: "hsvaColor";
+  h?: number;
+  s?: number;
+  v?: number;
+  a?: number;
+};
+
+export type HslaColor = {
+  _type: "hslaColor";
+  h?: number;
+  s?: number;
+  l?: number;
+  a?: number;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -352,12 +484,17 @@ export type AllSanitySchemaTypes =
   | TextBlock
   | SanityImageAssetReference
   | ImageBlock
+  | Info
   | SiteSettings
   | Project
   | SanityImageCrop
   | SanityImageHotspot
+  | Color
   | Slug
   | Post
+  | RgbaColor
+  | HsvaColor
+  | HslaColor
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -369,24 +506,12 @@ export type AllSanitySchemaTypes =
 
 // Source: ../src/app/blog/[slug]/page.tsx
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0]
+// Query: *[_type == "post" && slug.current == $slug][0]{  title,  publishedAt,  excerpt,  body}
 export type POST_QUERY_RESULT = {
-  _id: string;
-  _type: "post";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  publishedAt?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  body?: Array<{
+  title: string | null;
+  publishedAt: string | null;
+  excerpt: string | null;
+  body: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -403,85 +528,116 @@ export type POST_QUERY_RESULT = {
     level?: number;
     _type: "block";
     _key: string;
-  }>;
+  }> | null;
 } | null;
 
 // Source: ../src/app/blog/page.tsx
 // Variable: POSTS_QUERY
-// Query: *[  _type == "post"  && defined(slug.current)]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}
+// Query: *[  _type == "post"  && defined(slug.current)]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}
 export type POSTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
   slug: Slug | null;
   publishedAt: string | null;
+  excerpt: string | null;
 }>;
 
 // Source: ../src/app/info/page.tsx
-// Variable: SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0]{  siteTitle,  siteDescription,  infoContent,  socialLinks,  contactEmail}
-export type SETTINGS_QUERY_RESULT = {
-  siteTitle: string | null;
-  siteDescription: string | null;
-  infoContent: Array<
-    | ({
-        _key: string;
-      } & ColorBlock)
-    | ({
-        _key: string;
-      } & HeadingBlock)
-    | ({
-        _key: string;
-      } & ImageBlock)
-    | ({
-        _key: string;
-      } & LinkBlock)
-    | ({
-        _key: string;
-      } & SpacerBlock)
-    | ({
-        _key: string;
-      } & TextBlock)
-  > | null;
-  socialLinks: Array<{
-    platform?: string;
-    url?: string;
+// Variable: INFO_QUERY
+// Query: *[_type == "info"][0]{  title,  bio,  contactLabel,  contactEmail,  stacks[]{    heading,    rows[]{label, value}  }}
+export type INFO_QUERY_RESULT = {
+  title: string | null;
+  bio: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
     _key: string;
   }> | null;
+  contactLabel: string | null;
   contactEmail: string | null;
+  stacks: Array<{
+    heading: string | null;
+    rows: Array<{
+      label: string | null;
+      value: string | null;
+    }> | null;
+  }> | null;
 } | null;
 
 // Source: ../src/app/page.tsx
 // Variable: PINNED_PROJECTS_QUERY
-// Query: *[  _type == "project"  && pinToTopRow == true  && defined(slug.current)]|order(order asc)[0...3]{  _id,  title,  slug,  shortDescription,  cardBackgroundColor,  cardTextColor,  order}
+// Query: *[  _type == "project"  && pinToTopRow == true  && defined(slug.current)]|order(order asc)[0...3]{  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  year,  categories,  "tileImageUrl": tileImage.asset->url,  order}
 export type PINNED_PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
   slug: Slug | null;
-  shortDescription: string | null;
+  description: string | null;
   cardBackgroundColor: string | null;
   cardTextColor: string | null;
+  tileVariant:
+    | "color"
+    | "image-bar"
+    | "image-bleed"
+    | "image-corner"
+    | "type-only"
+    | "video"
+    | null;
+  videoDuration: string | null;
+  year: number | null;
+  categories: Array<string> | null;
+  tileImageUrl: string | null;
   order: number | null;
 }>;
 
 // Source: ../src/app/page.tsx
 // Variable: FEATURED_PROJECTS_QUERY
-// Query: *[  _type == "project"  && showOnHomepage == true  && pinToTopRow != true  && defined(slug.current)]|order(order asc){  _id,  title,  slug,  shortDescription,  cardBackgroundColor,  cardTextColor,  order}
+// Query: *[  _type == "project"  && showOnHomepage == true  && pinToTopRow != true  && defined(slug.current)]|order(order asc){  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  year,  categories,  "tileImageUrl": tileImage.asset->url,  order}
 export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
   slug: Slug | null;
-  shortDescription: string | null;
+  description: string | null;
   cardBackgroundColor: string | null;
   cardTextColor: string | null;
+  tileVariant:
+    | "color"
+    | "image-bar"
+    | "image-bleed"
+    | "image-corner"
+    | "type-only"
+    | "video"
+    | null;
+  videoDuration: string | null;
+  year: number | null;
+  categories: Array<string> | null;
+  tileImageUrl: string | null;
   order: number | null;
 }>;
 
 // Source: ../src/app/projx/[slug]/page.tsx
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{  title,  shortDescription,  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
+// Query: *[_type == "project" && slug.current == $slug][0]{  title,  description,  lede,  materials,  year,  categories,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
 export type PROJECT_QUERY_RESULT = {
   title: string | null;
-  shortDescription: string | null;
+  description: string | null;
+  lede: string | null;
+  materials: string | null;
+  year: number | null;
+  categories: Array<string> | null;
+  cardBackgroundColor: string | null;
+  cardTextColor: string | null;
   content: Array<
     | ({
         _key: string;
@@ -512,21 +668,30 @@ export type PROJECT_QUERY_RESULT = {
   } | null;
 } | null;
 
-// Source: ../src/components/ThemeProvider.tsx
-// Variable: THEME_QUERY
-// Query: *[_type == "siteSettings"][0].theme
-export type THEME_QUERY_RESULT = "dark" | "light" | null;
+// Source: ../src/sanity/queries.ts
+// Variable: SITE_SETTINGS_QUERY
+// Query: *[_type == "siteSettings"][0]{  siteTitle,  siteDescription,  socialLinks,  contactEmail}
+export type SITE_SETTINGS_QUERY_RESULT = {
+  siteTitle: string | null;
+  siteDescription: string | null;
+  socialLinks: Array<{
+    platform?: string;
+    url?: string;
+    _key: string;
+  }> | null;
+  contactEmail: string | null;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "post" && slug.current == $slug][0]': POST_QUERY_RESULT;
-    '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}': POSTS_QUERY_RESULT;
-    '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  infoContent,\n  socialLinks,\n  contactEmail\n}': SETTINGS_QUERY_RESULT;
-    '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  shortDescription,\n  cardBackgroundColor,\n  cardTextColor,\n  order\n}': PINNED_PROJECTS_QUERY_RESULT;
-    '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(order asc){\n  _id,\n  title,\n  slug,\n  shortDescription,\n  cardBackgroundColor,\n  cardTextColor,\n  order\n}': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  shortDescription,\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
-    '*[_type == "siteSettings"][0].theme': THEME_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0]{\n  title,\n  publishedAt,\n  excerpt,\n  body\n}': POST_QUERY_RESULT;
+    '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}': POSTS_QUERY_RESULT;
+    '*[_type == "info"][0]{\n  title,\n  bio,\n  contactLabel,\n  contactEmail,\n  stacks[]{\n    heading,\n    rows[]{label, value}\n  }\n}': INFO_QUERY_RESULT;
+    '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': PINNED_PROJECTS_QUERY_RESULT;
+    '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(order asc){\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': FEATURED_PROJECTS_QUERY_RESULT;
+    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
+    '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  socialLinks,\n  contactEmail\n}': SITE_SETTINGS_QUERY_RESULT;
   }
 }

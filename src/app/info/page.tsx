@@ -1,87 +1,79 @@
 import { cache } from "react";
-import { defineQuery } from "next-sanity";
+import { defineQuery, PortableText } from "next-sanity";
 import { client } from "@/sanity/client";
-import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { getSiteSettings } from "@/sanity/queries";
 import type { Metadata } from "next";
 
-const SETTINGS_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
-  siteTitle,
-  siteDescription,
-  infoContent,
-  socialLinks,
-  contactEmail
+const INFO_QUERY = defineQuery(`*[_type == "info"][0]{
+  title,
+  bio,
+  contactLabel,
+  contactEmail,
+  stacks[]{
+    heading,
+    rows[]{label, value}
+  }
 }`);
 
 const options = { next: { revalidate: 30 } };
 
-const getSettings = cache(async () =>
-  client.fetch(SETTINGS_QUERY, {}, options),
-);
+const getInfo = cache(async () => client.fetch(INFO_QUERY, {}, options));
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
-
+  const settings = await getSiteSettings();
   return {
-    title: settings?.siteTitle ? `${settings.siteTitle} - Info` : "Info",
-    description: settings?.siteDescription || "Information and contact",
+    title: settings?.siteTitle ? `${settings.siteTitle} — About` : "About",
+    description: settings?.siteDescription || "About BXRS.ART",
   };
 }
 
 export default async function InfoPage() {
-  const settings = await getSettings();
+  const [info, settings] = await Promise.all([getInfo(), getSiteSettings()]);
 
-  if (!settings) {
-    return (
-      <main className="container mx-auto min-h-screen max-w-7xl p-8">
-        <h1 className="text-4xl font-bold mb-8">Info</h1>
-        <p>No info content available yet.</p>
-      </main>
-    );
-  }
+  const title = info?.title ?? "ABOUT.";
+  const bio = info?.bio;
+  const stacks = info?.stacks;
+  const contactEmail = info?.contactEmail || settings?.contactEmail;
+  const contactLabel = info?.contactLabel || "WRITE TO ME →";
 
   return (
-    <main className="container mx-auto min-h-screen max-w-7xl p-8">
-      {settings.infoContent && settings.infoContent.length > 0 ? (
-        <BlockRenderer blocks={settings.infoContent} />
-      ) : (
-        <>
-          <h1 className="text-4xl font-bold mb-8">{settings.siteTitle}</h1>
-          {settings.siteDescription && (
-            <p className="text-lg mb-8">{settings.siteDescription}</p>
-          )}
+    <main className="about">
+      <div>
+        <h1>{title}</h1>
 
-          {settings.socialLinks && settings.socialLinks.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">Connect</h2>
-              <ul className="flex flex-col gap-2">
-                {settings.socialLinks.map((link) => (
-                  <li key={link._key}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {link.platform}
-                    </a>
-                  </li>
+        {Array.isArray(bio) && bio.length > 0 && (
+          <div className="bio">
+            <PortableText value={bio} />
+          </div>
+        )}
+
+        {contactEmail && (
+          <a className="contact-btn" href={`mailto:${contactEmail}`}>
+            {contactLabel}
+          </a>
+        )}
+      </div>
+
+      {stacks && stacks.length > 0 && (
+        <div>
+          {stacks.map((stack, i) => (
+            <div
+              className="col"
+              key={stack?.heading ?? i}
+              style={i > 0 ? { marginTop: 32 } : undefined}
+            >
+              {stack?.heading && <h3>{stack.heading}</h3>}
+              <div className="stack">
+                {stack?.rows?.map((row, j) => (
+                  <div className="row" key={`${row?.label}-${j}`}>
+                    <span>{row?.label}</span>
+                    <span>{row?.value}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          )}
-
-          {settings.contactEmail && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Contact</h2>
-              <a
-                href={`mailto:${settings.contactEmail}`}
-                className="hover:underline"
-              >
-                {settings.contactEmail}
-              </a>
-            </div>
-          )}
-        </>
+          ))}
+        </div>
       )}
     </main>
   );

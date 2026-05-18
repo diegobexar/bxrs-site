@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {layoutFields, layoutFieldset} from './layoutFields'
+import {fontFamilyField, fontSizeField} from './fontFields'
 
 export const headingBlock = defineType({
   name: 'headingBlock',
@@ -27,37 +28,13 @@ export const headingBlock = defineType({
       },
       initialValue: 'h2',
     }),
-    defineField({
-      name: 'fontSize',
-      title: 'Font Size',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Large', value: 'lg'},
-          {title: 'Extra Large', value: 'xl'},
-          {title: '2XL', value: '2xl'},
-          {title: '3XL', value: '3xl'},
-          {title: '4XL', value: '4xl'},
-          {title: '5XL', value: '5xl'},
-          {title: '6XL', value: '6xl'},
-        ],
-      },
-      initialValue: '2xl',
-    }),
-    defineField({
-      name: 'fontWeight',
-      title: 'Font Weight',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Normal', value: 'normal'},
-          {title: 'Medium', value: 'medium'},
-          {title: 'Semibold', value: 'semibold'},
-          {title: 'Bold', value: 'bold'},
-        ],
-      },
-      initialValue: 'bold',
-    }),
+    fontFamilyField('fontFamily', 'Font Family', 'sans'),
+    fontSizeField(
+      'fontSize',
+      'Font Size Override',
+      undefined,
+      'Optional. Default sizing for the chosen Heading Level comes from the design system; this field overrides it.',
+    ),
     defineField({
       name: 'textTransform',
       title: 'Text Transform',

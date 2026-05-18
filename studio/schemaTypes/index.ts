@@ -1,3 +1,4 @@
+import {infoType} from './infoType'
 import {postType} from './postType'
 import {projectType} from './projectType'
 import {siteSettingsType} from './siteSettingsType'
@@ -15,6 +16,7 @@ export const schemaTypes = [
   postType,
   projectType,
   siteSettingsType,
+  infoType,
   // Block content types
   imageBlock,
   textBlock,
@@ -23,3 +25,9 @@ export const schemaTypes = [
   colorBlock,
   spacerBlock,
 ]
+
+// Singleton document types — exactly one document each, fixed ID.
+export const SINGLETONS = [
+  {type: 'siteSettings', id: 'siteSettings', title: 'Site Settings'},
+  {type: 'info', id: 'info', title: 'Info / About'},
+] as const

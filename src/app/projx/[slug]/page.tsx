@@ -3,12 +3,20 @@ import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { MultilineText } from "@/components/MultilineText";
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { urlFor } from "@/sanity/image";
 
 const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0]{
   title,
-  shortDescription,
+  description,
+  lede,
+  materials,
+  year,
+  categories,
+  "cardBackgroundColor": cardBackgroundColor.hex,
+  cardTextColor,
   content,
   seoTitle,
   seoDescription,
@@ -20,7 +28,7 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
   }
 }`);
 
-const options = { next: { revalidate: 3600 } };
+const options = { next: { revalidate: 30 } };
 
 const getProject = cache(async (slug: string) =>
   client.fetch(PROJECT_QUERY, { slug }, options),
@@ -35,28 +43,28 @@ export async function generateMetadata({
   const project = await getProject(slug);
 
   if (!project) {
-    return {
-      title: "Project Not Found",
-    };
+    return { title: "Project Not Found" };
   }
 
   const seoImageUrl = project.seoImage
     ? urlFor(project.seoImage)?.width(1200).height(630).url()
     : null;
 
+  const description = project.seoDescription || project.description || "";
+
   return {
     title: project.seoTitle || project.title || "Project",
-    description: project.seoDescription || project.shortDescription || "",
+    description,
     openGraph: {
       title: project.seoTitle || project.title || "Project",
-      description: project.seoDescription || project.shortDescription || "",
+      description,
       images: seoImageUrl ? [seoImageUrl] : [],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: project.seoTitle || project.title || "Project",
-      description: project.seoDescription || project.shortDescription || "",
+      description,
       images: seoImageUrl ? [seoImageUrl] : [],
     },
   };
@@ -72,21 +80,63 @@ export default async function ProjectPage({
 
   if (!project) {
     return (
-      <main className="container mx-auto min-h-screen max-w-7xl p-8">
-        <Link href="/" className="hover:underline">
-          ← Back to home
-        </Link>
-        <h1 className="text-4xl font-bold mb-8">Project not found</h1>
+      <main className="project">
+        <div className="crumb">
+          <Link href="/">← WORK</Link>
+        </div>
+        <h1>Project not found</h1>
       </main>
     );
   }
 
+  const bg = project.cardBackgroundColor || undefined;
+  const fg = project.cardTextColor || undefined;
+  const pageStyle = (
+    bg ? { "--page-bg": bg, "--page-fg": fg ?? "#111" } : {}
+  ) as CSSProperties;
+
+  const year = project.year ?? null;
+  const categories = project.categories?.join(" · ");
+
   return (
-    <main className="min-h-screen">
-      <div className="container mx-auto max-w-7xl px-8 py-8">
-        <Link href="/" className="hover:underline mb-8 inline-block">
-          ← Back to home
-        </Link>
+    <main className="page color-page" style={pageStyle}>
+      <div className="project">
+        <div className="crumb">
+          <Link href="/">← WORK</Link>
+        </div>
+
+        <h1>
+          <MultilineText value={project.title} />
+        </h1>
+
+        <div className="meta">
+          {year && (
+            <div className="cell">
+              <span className="k">Year</span>
+              <span className="v">{year}</span>
+            </div>
+          )}
+          {categories && (
+            <div className="cell">
+              <span className="k">Categories</span>
+              <span className="v">{categories}</span>
+            </div>
+          )}
+          {project.materials && (
+            <div className="cell">
+              <span className="k">Materials</span>
+              <span className="v">{project.materials}</span>
+            </div>
+          )}
+          {project.description && (
+            <div className="cell">
+              <span className="k">About</span>
+              <span className="v">{project.description}</span>
+            </div>
+          )}
+        </div>
+
+        {project.lede && <p className="lede">{project.lede}</p>}
       </div>
 
       {project.content && <BlockRenderer blocks={project.content} />}

@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {layoutFields, layoutFieldset} from './layoutFields'
+import {fontFamilyField, fontSizeField} from './fontFields'
 
 export const imageBlock = defineType({
   name: 'imageBlock',
@@ -21,6 +22,8 @@ export const imageBlock = defineType({
       title: 'Caption',
       type: 'string',
     }),
+    fontFamilyField('captionFontFamily', 'Caption Font Family', 'mono'),
+    fontSizeField('captionFontSize', 'Caption Font Size', 't-12'),
     defineField({
       name: 'link',
       title: 'Link URL',

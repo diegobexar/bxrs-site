@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="preview.css">
+<style>
+.card { padding: 22px 28px; gap: 14px; }
+.title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+.row { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+.tile {
+  width: 110px; height: 80px;
+  background: #1442FF; color: #fff;
+  border: 2px solid var(--bxrs-ink);
+  box-shadow: 4px 4px 0 var(--bxrs-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans); font-weight: 800; text-transform: uppercase; font-size: 11px;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.t-fast { animation: hov 240ms cubic-bezier(0.2,0.7,0.2,1) infinite alternate; }
+.t-med { animation: hov 400ms cubic-bezier(0.2,0.7,0.2,1) infinite alternate; }
+.t-slow { animation: hov 720ms cubic-bezier(0.6,0,0.2,1) infinite alternate; }
+@keyframes hov {
+  from { transform: translate(0,0); box-shadow: 4px 4px 0 var(--bxrs-ink); }
+  to { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--bxrs-ink); }
+}
+.cap { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--bxrs-ink-3); text-transform: uppercase; }
+</style></head>
+<body><div class="card">
+  <div class="title">Three durations, two eases. No springs, no bounces.</div>
+  <div class="row">
+    <div><div class="tile t-fast">FAST</div><div class="cap"><span class="lab">120MS · BUTTONS</span></div></div>
+    <div><div class="tile t-med" style="background:#15B257">DEFAULT</div><div class="cap"><span class="lab">200MS · HOVERS</span></div></div>
+    <div><div class="tile t-slow" style="background:#FF3B2E;color:#111">SLOW</div><div class="cap"><span class="lab">360MS · PAGES</span></div></div>
+    <div style="margin-left:auto;display:flex;flex-direction:column;gap:6px;">
+      <span class="lab">EASE-OUT · 0.2 0.7 0.2 1</span>
+      <span class="lab">EASE-SNAP · 0.6 0 0.2 1</span>
+    </div>
+  </div>
+</div></body></html>
