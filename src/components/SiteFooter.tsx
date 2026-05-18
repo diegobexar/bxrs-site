@@ -1,18 +1,8 @@
 import Link from "next/link";
-import { defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
-
-const FOOTER_SETTINGS_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
-  contactEmail,
-  socialLinks
-}`);
+import { getSiteSettings } from "@/sanity/queries";
 
 export async function SiteFooter() {
-  const settings = await client.fetch(
-    FOOTER_SETTINGS_QUERY,
-    {},
-    { next: { revalidate: 3600 } },
-  );
+  const settings = await getSiteSettings();
 
   const social = settings?.socialLinks ?? [];
   const email = settings?.contactEmail;

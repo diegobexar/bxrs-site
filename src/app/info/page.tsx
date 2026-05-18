@@ -1,23 +1,17 @@
 import { cache } from "react";
 import { defineQuery, PortableText } from "next-sanity";
 import { client } from "@/sanity/client";
+import { getSiteSettings } from "@/sanity/queries";
 import type { Metadata } from "next";
 
-const INFO_QUERY = defineQuery(`{
-  "info": *[_type == "info"][0]{
-    title,
-    bio,
-    contactLabel,
-    contactEmail,
-    stacks[]{
-      heading,
-      rows[]{label, value}
-    }
-  },
-  "settings": *[_type == "siteSettings"][0]{
-    siteTitle,
-    siteDescription,
-    contactEmail
+const INFO_QUERY = defineQuery(`*[_type == "info"][0]{
+  title,
+  bio,
+  contactLabel,
+  contactEmail,
+  stacks[]{
+    heading,
+    rows[]{label, value}
   }
 }`);
 
@@ -26,7 +20,7 @@ const options = { next: { revalidate: 30 } };
 const getInfo = cache(async () => client.fetch(INFO_QUERY, {}, options));
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { settings } = await getInfo();
+  const settings = await getSiteSettings();
   return {
     title: settings?.siteTitle ? `${settings.siteTitle} — About` : "About",
     description: settings?.siteDescription || "About BXRS.ART",
@@ -34,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function InfoPage() {
-  const { info, settings } = await getInfo();
+  const [info, settings] = await Promise.all([getInfo(), getSiteSettings()]);
 
   const title = info?.title ?? "ABOUT.";
   const bio = info?.bio;

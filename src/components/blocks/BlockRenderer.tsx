@@ -7,10 +7,9 @@ interface BlockRendererProps {
   blocks: any[];
 }
 
-// ---------- Design-system maps ----------
-
-// Map design-system type-scale tokens to CSS variable names.
-// Also accepts legacy Tailwind-named values (sm/md/lg/...) for back-compat.
+// Legacy Tailwind-named values (sm/md/lg/...) are kept in the alias list
+// because the schema's pre-design-system rev stored them; existing documents
+// would otherwise render at the fallback size.
 const fontSizeMap: Record<string, string> = {
   "t-12": "var(--t-12)",
   "t-14": "var(--t-14)",
@@ -123,9 +122,6 @@ function layoutStyle(
   };
 }
 
-// ---------- PortableText component overrides ----------
-// Apply design-system styling inside rich text (links, marks, headings,
-// blockquotes). Bare `<p>` falls through to the body styles in bxrs-tokens.css.
 const portableComponents: PortableTextComponents = {
   block: {
     h2: ({ children }) => <h2>{children}</h2>,
@@ -156,8 +152,6 @@ const portableComponents: PortableTextComponents = {
   },
 };
 
-// ---------- Dispatcher ----------
-
 export function BlockRenderer({ blocks }: BlockRendererProps) {
   if (!blocks || blocks.length === 0) return null;
 
@@ -184,8 +178,6 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
     </div>
   );
 }
-
-// ---------- Block components ----------
 
 function ImageBlock({ block }: { block: any }) {
   const imageUrl = block.image ? urlFor(block.image)?.url() : null;

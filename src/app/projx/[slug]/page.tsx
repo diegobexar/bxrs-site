@@ -3,6 +3,7 @@ import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { MultilineText } from "@/components/MultilineText";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { urlFor } from "@/sanity/image";
@@ -105,11 +106,7 @@ export default async function ProjectPage({
         </div>
 
         <h1>
-          {(project.title ?? "").split("\n").map((line, i) => (
-            <span key={i} style={{ display: "block" }}>
-              {line}
-            </span>
-          ))}
+          <MultilineText value={project.title} />
         </h1>
 
         <div className="meta">

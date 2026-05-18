@@ -121,7 +121,8 @@ export type TextBlock = {
     | "t-32"
     | "t-44"
     | "t-60"
-    | "t-84";
+    | "t-84"
+    | "t-120";
   fontWeight?: "normal" | "medium" | "semibold" | "bold";
   textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
   textAlign?: "left" | "center" | "right";
@@ -543,50 +544,36 @@ export type POSTS_QUERY_RESULT = Array<{
 
 // Source: ../src/app/info/page.tsx
 // Variable: INFO_QUERY
-// Query: {  "info": *[_type == "info"][0]{    title,    bio,    contactLabel,    contactEmail,    stacks[]{      heading,      rows[]{label, value}    }  },  "settings": *[_type == "siteSettings"][0]{    siteTitle,    siteDescription,    contactEmail  }}
+// Query: *[_type == "info"][0]{  title,  bio,  contactLabel,  contactEmail,  stacks[]{    heading,    rows[]{label, value}  }}
 export type INFO_QUERY_RESULT = {
-  info: {
-    title: string | null;
-    bio: Array<{
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "normal";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
+  title: string | null;
+  bio: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
       _key: string;
+    }>;
+    style?: "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  contactLabel: string | null;
+  contactEmail: string | null;
+  stacks: Array<{
+    heading: string | null;
+    rows: Array<{
+      label: string | null;
+      value: string | null;
     }> | null;
-    contactLabel: string | null;
-    contactEmail: string | null;
-    stacks: Array<{
-      heading: string | null;
-      rows: Array<{
-        label: string | null;
-        value: string | null;
-      }> | null;
-    }> | null;
-  } | null;
-  settings: {
-    siteTitle: string | null;
-    siteDescription: string | null;
-    contactEmail: string | null;
-  } | null;
-};
-
-// Source: ../src/app/page.tsx
-// Variable: HOMEPAGE_INTRO_QUERY
-// Query: *[_type == "siteSettings"][0]{  siteDescription}
-export type HOMEPAGE_INTRO_QUERY_RESULT = {
-  siteDescription: string | null;
+  }> | null;
 } | null;
 
 // Source: ../src/app/page.tsx
@@ -681,16 +668,18 @@ export type PROJECT_QUERY_RESULT = {
   } | null;
 } | null;
 
-// Source: ../src/components/SiteFooter.tsx
-// Variable: FOOTER_SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0]{  contactEmail,  socialLinks}
-export type FOOTER_SETTINGS_QUERY_RESULT = {
-  contactEmail: string | null;
+// Source: ../src/sanity/queries.ts
+// Variable: SITE_SETTINGS_QUERY
+// Query: *[_type == "siteSettings"][0]{  siteTitle,  siteDescription,  socialLinks,  contactEmail}
+export type SITE_SETTINGS_QUERY_RESULT = {
+  siteTitle: string | null;
+  siteDescription: string | null;
   socialLinks: Array<{
     platform?: string;
     url?: string;
     _key: string;
   }> | null;
+  contactEmail: string | null;
 } | null;
 
 // Query TypeMap
@@ -699,11 +688,10 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && slug.current == $slug][0]{\n  title,\n  publishedAt,\n  excerpt,\n  body\n}': POST_QUERY_RESULT;
     '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}': POSTS_QUERY_RESULT;
-    '{\n  "info": *[_type == "info"][0]{\n    title,\n    bio,\n    contactLabel,\n    contactEmail,\n    stacks[]{\n      heading,\n      rows[]{label, value}\n    }\n  },\n  "settings": *[_type == "siteSettings"][0]{\n    siteTitle,\n    siteDescription,\n    contactEmail\n  }\n}': INFO_QUERY_RESULT;
-    '*[_type == "siteSettings"][0]{\n  siteDescription\n}': HOMEPAGE_INTRO_QUERY_RESULT;
+    '*[_type == "info"][0]{\n  title,\n  bio,\n  contactLabel,\n  contactEmail,\n  stacks[]{\n    heading,\n    rows[]{label, value}\n  }\n}': INFO_QUERY_RESULT;
     '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': PINNED_PROJECTS_QUERY_RESULT;
     '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(order asc){\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': FEATURED_PROJECTS_QUERY_RESULT;
     '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
-    '*[_type == "siteSettings"][0]{\n  contactEmail,\n  socialLinks\n}': FOOTER_SETTINGS_QUERY_RESULT;
+    '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  socialLinks,\n  contactEmail\n}': SITE_SETTINGS_QUERY_RESULT;
   }
 }

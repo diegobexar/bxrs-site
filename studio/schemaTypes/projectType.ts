@@ -1,7 +1,22 @@
 import {defineField, defineType} from 'sanity'
 import {TextColorPicker} from '../components/TextColorPicker'
+import {TILE_VARIANTS, TILE_VARIANTS_REQUIRING_IMAGE} from '../lib/tileVariants'
 
-const IMAGE_VARIANTS = ['image-bleed', 'image-bar', 'image-corner', 'video']
+const IMAGE_VARIANTS: readonly string[] = TILE_VARIANTS_REQUIRING_IMAGE
+
+const TILE_VARIANT_OPTIONS: {title: string; value: string}[] = TILE_VARIANTS.map(
+  (value) => {
+    const title = {
+      'color': 'Color field',
+      'image-bleed': 'Image — full bleed',
+      'image-bar': 'Image — bar',
+      'image-corner': 'Image — corner',
+      'type-only': 'Type only',
+      'video': 'Video',
+    }[value]
+    return {title, value}
+  },
+)
 
 export const projectType = defineType({
   name: 'project',
@@ -68,17 +83,7 @@ export const projectType = defineType({
       title: 'Tile Variant',
       type: 'string',
       description: 'Layout for the homepage tile.',
-      options: {
-        list: [
-          {title: 'Color field', value: 'color'},
-          {title: 'Image — full bleed', value: 'image-bleed'},
-          {title: 'Image — bar', value: 'image-bar'},
-          {title: 'Image — corner', value: 'image-corner'},
-          {title: 'Type only', value: 'type-only'},
-          {title: 'Video', value: 'video'},
-        ],
-        layout: 'radio',
-      },
+      options: {list: TILE_VARIANT_OPTIONS, layout: 'radio'},
       initialValue: 'color',
       validation: (rule) => rule.required(),
     }),

@@ -1,21 +1,15 @@
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import { Tile, type TileProject } from "@/components/Tile";
+import { MultilineText } from "@/components/MultilineText";
+import { getSiteSettings } from "@/sanity/queries";
 import type { Metadata } from "next";
 
-const HOMEPAGE_INTRO_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
-  siteDescription
-}`);
-
 export async function generateMetadata(): Promise<Metadata> {
-  const intro = await client.fetch(
-    HOMEPAGE_INTRO_QUERY,
-    {},
-    { next: { revalidate: 30 } },
-  );
+  const settings = await getSiteSettings();
   return {
     title: "BXRS — Work",
-    description: intro?.siteDescription ?? undefined,
+    description: settings?.siteDescription ?? undefined,
   };
 }
 
@@ -50,24 +44,20 @@ const FEATURED_PROJECTS_QUERY = defineQuery(`*[
 const options = { next: { revalidate: 30 } };
 
 export default async function IndexPage() {
-  const [pinnedProjects, featuredProjects, intro] = await Promise.all([
+  const [pinnedProjects, featuredProjects, settings] = await Promise.all([
     client.fetch(PINNED_PROJECTS_QUERY, {}, options),
     client.fetch(FEATURED_PROJECTS_QUERY, {}, options),
-    client.fetch(HOMEPAGE_INTRO_QUERY, {}, options),
+    getSiteSettings(),
   ]);
 
-  const headlineLines = intro?.siteDescription?.split("\n") ?? [];
+  const headline = settings?.siteDescription;
 
   return (
     <main className="home">
-      {headlineLines.length > 0 && (
+      {headline && (
         <div className="intro">
           <h1>
-            {headlineLines.map((line, i) => (
-              <span key={i} style={{ display: "block" }}>
-                {line}
-              </span>
-            ))}
+            <MultilineText value={headline} />
           </h1>
         </div>
       )}

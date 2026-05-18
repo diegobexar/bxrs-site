@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
+import { formatDate } from "@/lib/date";
 
 const POSTS_QUERY = defineQuery(`*[
   _type == "post"
@@ -8,17 +9,6 @@ const POSTS_QUERY = defineQuery(`*[
 ]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}`);
 
 const options = { next: { revalidate: 30 } };
-
-function formatDate(iso?: string | null): string {
-  if (!iso) return "";
-  return new Date(iso)
-    .toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-    .toUpperCase();
-}
 
 export default async function BlogPage() {
   const posts = await client.fetch(POSTS_QUERY, {}, options);

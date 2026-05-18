@@ -28,6 +28,7 @@ export function fontFamilyField(
   name = 'fontFamily',
   title = 'Font Family',
   initialValue: string | undefined = 'sans',
+  description?: string,
 ) {
   return defineField({
     name,
@@ -35,6 +36,7 @@ export function fontFamilyField(
     type: 'string',
     options: {list: FONT_FAMILY_OPTIONS},
     initialValue,
+    description,
   })
 }
 

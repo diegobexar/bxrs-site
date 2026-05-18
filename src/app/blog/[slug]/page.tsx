@@ -1,6 +1,7 @@
 import { PortableText, defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
+import { formatDate } from "@/lib/date";
 
 const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]{
   title,
@@ -10,17 +11,6 @@ const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]{
 }`);
 
 const options = { next: { revalidate: 30 } };
-
-function formatDate(iso?: string | null): string {
-  if (!iso) return "";
-  return new Date(iso)
-    .toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-    .toUpperCase();
-}
 
 function readingTime(body: unknown): string {
   if (!Array.isArray(body)) return "—";

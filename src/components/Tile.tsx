@@ -1,12 +1,8 @@
 import Link from "next/link";
+import { MultilineText } from "@/components/MultilineText";
+import type { TileVariant } from "../../studio/lib/tileVariants";
 
-export type TileVariant =
-  | "color"
-  | "image-bleed"
-  | "image-bar"
-  | "image-corner"
-  | "type-only"
-  | "video";
+export type { TileVariant };
 
 export type TileProject = {
   _id: string;
@@ -38,10 +34,6 @@ function topMeta(project: TileProject): string {
   return [project.year, cat].filter(Boolean).join(" · ");
 }
 
-function titleLines(title: string | null | undefined): string[] {
-  return (title ?? "").split("\n");
-}
-
 export function Tile({ project, index }: Props) {
   const variant: TileVariant = project.tileVariant ?? "color";
   const bg = bgHex(project.cardBackgroundColor);
@@ -61,11 +53,7 @@ export function Tile({ project, index }: Props) {
   const TitleBlock = (
     <div className="tile-title-block">
       <div className="tile-title">
-        {titleLines(project.title).map((line, i) => (
-          <span key={i} style={{ display: "block" }}>
-            {line}
-          </span>
-        ))}
+        <MultilineText value={project.title} />
       </div>
       {project.description && (
         <div className="tile-desc">{project.description}</div>
@@ -120,7 +108,7 @@ export function Tile({ project, index }: Props) {
   }
 
   if (variant === "type-only") {
-    const lines = titleLines(project.title);
+    const lines = (project.title ?? "").split("\n");
     return (
       <Link href={href} className="tile tile-type-only" style={baseStyle}>
         {Topline}

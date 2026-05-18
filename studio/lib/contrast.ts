@@ -1,5 +1,5 @@
-// WCAG 2.1 relative luminance + contrast ratio.
-// Studio-side mirror of src/lib/contrast.ts. Keep in sync.
+// WCAG 2.1 luminance + contrast ratio. Mirror of src/lib/contrast.ts —
+// keep both files in sync (studio is a separate package).
 
 export type NamedColor = { name: string; hex: string };
 export type RatedColor = NamedColor & { ratio: number };
@@ -49,9 +49,9 @@ export function bestTextColor(
   bg: string,
   {min = 4.5}: {min?: number} = {},
 ): RatedColor {
-  const list = readableTextColors(bg, {min});
-  if (list.length) return list[0];
-  return BXRS_TEXT_COLORS.map((c) => ({...c, ratio: contrast(bg, c.hex)})).sort(
-    (a, b) => b.ratio - a.ratio,
-  )[0];
+  const rated = BXRS_TEXT_COLORS.map((c) => ({
+    ...c,
+    ratio: contrast(bg, c.hex),
+  })).sort((a, b) => b.ratio - a.ratio)
+  return rated.find((c) => c.ratio >= min) ?? rated[0]
 }

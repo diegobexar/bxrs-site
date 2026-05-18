@@ -1,6 +1,5 @@
-// WCAG 2.1 relative luminance + contrast ratio.
-// Shared by the Next app (Tile fallbacks, runtime checks) and the Sanity
-// Studio TextColorPicker. Keep in sync with studio/lib/contrast.ts.
+// WCAG 2.1 luminance + contrast ratio. Mirror of studio/lib/contrast.ts —
+// keep both files in sync (studio is a separate package, can't import from src).
 
 export type NamedColor = { name: string; hex: string };
 export type RatedColor = NamedColor & { ratio: number };
@@ -52,9 +51,9 @@ export function bestTextColor(
   bg: string,
   { min = 4.5 }: { min?: number } = {},
 ): RatedColor {
-  const list = readableTextColors(bg, { min });
-  if (list.length) return list[0];
-  return BXRS_TEXT_COLORS.map((c) => ({ ...c, ratio: contrast(bg, c.hex) })).sort(
-    (a, b) => b.ratio - a.ratio,
-  )[0];
+  const rated = BXRS_TEXT_COLORS.map((c) => ({
+    ...c,
+    ratio: contrast(bg, c.hex),
+  })).sort((a, b) => b.ratio - a.ratio);
+  return rated.find((c) => c.ratio >= min) ?? rated[0];
 }

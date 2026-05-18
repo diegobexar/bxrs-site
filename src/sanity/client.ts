@@ -1,8 +1,6 @@
 import { createClient } from "next-sanity";
 
-// useCdn: production hits Sanity's CDN edge (~1 min freshness, faster).
-// In dev, hit the live API so the artist sees edits without waiting for the
-// edge cache to expire.
+// useCdn off in dev so Studio edits appear without waiting for edge cache.
 export const client = createClient({
   projectId: "izt9f0dq",
   dataset: "production",
