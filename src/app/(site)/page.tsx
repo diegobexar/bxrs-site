@@ -1,5 +1,5 @@
 import { defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
+import { client, sanityFetch } from "@/sanity/client";
 import { Tile, type TileProject } from "@/components/Tile";
 import { MultilineText } from "@/components/MultilineText";
 import { getSiteSettings } from "@/sanity/queries";
@@ -38,12 +38,10 @@ const FEATURED_PROJECTS_QUERY = defineQuery(`*[
   && defined(slug.current)
 ]|order(coalesce(year, 0) desc, order asc)${PROJECT_CARD_PROJECTION}`);
 
-const options = { next: { revalidate: 30 } };
-
 export default async function IndexPage() {
   const [pinnedProjects, featuredProjects, settings] = await Promise.all([
-    client.fetch(PINNED_PROJECTS_QUERY, {}, options),
-    client.fetch(FEATURED_PROJECTS_QUERY, {}, options),
+    client.fetch(PINNED_PROJECTS_QUERY, {}, sanityFetch),
+    client.fetch(FEATURED_PROJECTS_QUERY, {}, sanityFetch),
     getSiteSettings(),
   ]);
 

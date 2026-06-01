@@ -7,3 +7,7 @@ export const client = createClient({
   apiVersion: "2025-05-01",
   useCdn: process.env.NODE_ENV === "production",
 });
+
+// Shared ISR window for every Sanity read (list + detail). 30s keeps the
+// artist's Studio edit-iteration loop snappy without re-fetching per request.
+export const sanityFetch = { next: { revalidate: 30 } } as const;

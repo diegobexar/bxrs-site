@@ -1,16 +1,17 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
+// eslint-config-next 16 ships native flat configs, so we spread them directly
+// instead of going through the FlatCompat shim (which crashed the validator).
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    // The block renderer maps over heterogeneous Sanity block-content objects
+    // whose fields vary per `_type`; `any` is the pragmatic contract here.
+    files: ["src/components/blocks/**/*.tsx"],
+    rules: { "@typescript-eslint/no-explicit-any": "off" },
+  },
   {
     ignores: [
       "node_modules/**",
@@ -18,6 +19,11 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Generated — never hand-linted.
+      "src/sanity/sanity.types.ts",
+      // Separate packages / design-system source with their own tooling.
+      "studio/**",
+      "bxrs-design/**",
     ],
   },
 ];

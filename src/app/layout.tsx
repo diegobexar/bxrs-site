@@ -21,6 +21,7 @@ const jbMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bxrs.art"),
   title: "BXRS",
   description: "Portfolio and creative works",
 };

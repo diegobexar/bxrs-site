@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { defineQuery, PortableText } from "next-sanity";
 import Image from "next/image";
-import { client } from "@/sanity/client";
+import { client, sanityFetch } from "@/sanity/client";
 import { getSiteSettings } from "@/sanity/queries";
 import type { Metadata } from "next";
 
@@ -23,9 +23,7 @@ const INFO_QUERY = defineQuery(`*[_type == "info"][0]{
   }
 }`);
 
-const options = { next: { revalidate: 30 } };
-
-const getInfo = cache(async () => client.fetch(INFO_QUERY, {}, options));
+const getInfo = cache(async () => client.fetch(INFO_QUERY, {}, sanityFetch));
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();

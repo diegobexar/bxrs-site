@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
+import { client, sanityFetch } from "@/sanity/client";
 import Image from "next/image";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { MultilineText } from "@/components/MultilineText";
@@ -24,7 +24,12 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
       metadata { dimensions { width, height } }
     }
   },
-  content,
+  content[]{
+    ...,
+    _type == "imageBlock" => {
+      "dimensions": image.asset->metadata.dimensions
+    }
+  },
   seoTitle,
   seoDescription,
   seoImage {
@@ -35,11 +40,18 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
   }
 }`);
 
-const options = { next: { revalidate: 30 } };
-
 const getProject = cache(async (slug: string) =>
-  client.fetch(PROJECT_QUERY, { slug }, options),
+  client.fetch(PROJECT_QUERY, { slug }, sanityFetch),
 );
+
+const PROJECT_SLUGS_QUERY = defineQuery(
+  `*[_type == "project" && defined(slug.current)]{ "slug": slug.current }`,
+);
+
+export async function generateStaticParams() {
+  const projects = await client.fetch(PROJECT_SLUGS_QUERY);
+  return projects.flatMap((p) => (p.slug ? [{ slug: p.slug }] : []));
+}
 
 export async function generateMetadata({
   params,

@@ -39,31 +39,36 @@ The site is governed by the **BXRS design system** in `/bxrs-design/`. It is the
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── layout.tsx          # Root layout — html/body/fonts only (no chrome)
+│   ├── layout.tsx          # Root layout — html/body/fonts + metadataBase (no chrome)
 │   ├── globals.css         # @import order: tailwind → bxrs-tokens → bxrs-components
+│   ├── sitemap.ts          # Generated /sitemap.xml — projects + notes + static routes
+│   ├── robots.ts           # Generated /robots.txt — allow all, disallow /studio
 │   ├── (site)/             # Route group — site chrome (SiteHeader + SiteFooter)
 │   │   ├── layout.tsx      # Wraps children with SiteHeader/SiteFooter
 │   │   ├── page.tsx        # Homepage — Tile grid (pinned + featured)
 │   │   ├── loading.tsx     # Loading state for site routes
-│   │   ├── blog/           # Studio Notes list + [slug] detail pages
+│   │   ├── notes/          # Studio Notes list + [slug] detail pages (generateStaticParams)
 │   │   ├── info/           # Info page (feature image + bio + stacks)
-│   │   └── projx/[slug]/   # Project detail (structured header + hero tileImage + BlockRenderer)
+│   │   └── projx/[slug]/   # Project detail (structured header + hero tileImage + BlockRenderer; generateStaticParams)
 │   └── studio/[[...tool]]/ # Embedded Sanity Studio (NextStudio) — outside (site) group so Studio chrome owns the viewport
 ├── components/
 │   ├── SiteHeader.tsx        # Sticky 64px header (server)
 │   ├── NavLinks.tsx          # Client child of SiteHeader — pathname-aware
 │   ├── SiteFooter.tsx        # Full-bleed ink footer (server, fetches siteSettings)
 │   ├── Tile.tsx              # Six-variant homepage tile
+│   ├── MultilineText.tsx     # Splits "\n"-delimited strings into <span> blocks
 │   └── blocks/
 │       └── BlockRenderer.tsx # Renders composable Sanity block-content arrays
 ├── lib/
-│   └── contrast.ts         # WCAG contrast helpers + BXRS_TEXT_COLORS
+│   ├── contrast.ts         # WCAG contrast helpers + BXRS_TEXT_COLORS
+│   └── date.ts             # formatDate — uppercase en-US short date
 ├── styles/
 │   ├── bxrs-tokens.css     # Mirror of bxrs-design/colors_and_type.css
 │   └── bxrs-components.css # Component CSS (header/footer/tile/project/blog/about)
 ├── sanity/
-│   ├── client.ts           # Sanity client (project: izt9f0dq, dataset: production)
+│   ├── client.ts           # Sanity client (project: izt9f0dq, dataset: production) + shared `sanityFetch` ISR options
 │   ├── image.ts            # Image URL builder helper
+│   ├── queries.ts          # Cross-cutting cache()-wrapped fetchers (getSiteSettings)
 │   ├── studio-config.ts    # Shared Sanity config — used by embedded /studio
 │   └── sanity.types.ts     # (generated) types for schema + all GROQ queries
 studio/                      # Sanity Studio (separate package, excluded from tsconfig)
@@ -102,18 +107,19 @@ npm run typegen:generate # Step 2: scan GROQ queries and emit src/sanity/sanity.
 
 ## Code Standards
 - TypeScript strict mode enabled
-- ESLint with `next/core-web-vitals` and `next/typescript`
+- ESLint with `next/core-web-vitals` and `next/typescript` (spread as native flat configs from `eslint-config-next` 16 — no FlatCompat shim; `studio/`, `bxrs-design/`, and generated `sanity.types.ts` are ignored, and `src/components/blocks/**` opts out of `no-explicit-any` for the dynamic block renderer)
 - Path alias: `@/*` maps to `./src/*`
 - All pages are React Server Components (async page functions with direct Sanity fetches); a single `NavLinks` client component handles active-route highlighting
 - Styling: Tailwind utilities for one-off layout; design system CSS classes (`.tile`, `.project`, `.blog-post`, etc.) for all canonical page surfaces
 
 ## Project-Specific Rules
 - All data comes from Sanity — no local database, no `.env` files (Sanity project ID is hardcoded in `src/sanity/client.ts`)
-- GROQ queries are defined inline using `defineQuery` from `next-sanity` so TypeGen picks them up; each is assigned to a uniquely-named module-level constant
+- GROQ queries are defined with `defineQuery` from `next-sanity` so TypeGen picks them up; each is assigned to a uniquely-named module-level constant. Page-specific queries live inline in the page; cross-cutting reads (e.g. `getSiteSettings`) live in `src/sanity/queries.ts` as `cache()`-wrapped fetchers shared across layout + pages.
 - `client.fetch(QUERY, ...)` returns the auto-inferred result type; do not pass an explicit generic
 - Result types are exported from `@/sanity/sanity.types` as `<QUERY_NAME>_RESULT`
 - Re-run `npm run typegen` after editing the studio schema OR adding/changing a GROQ query
-- ISR revalidation: 30s across the board (list + detail). Detail pages used to be 3600s; tightened so the artist's edit-iteration loop in Studio doesn't lag for an hour.
+- ISR revalidation: 30s across the board (list + detail), via the shared `sanityFetch` options object exported from `src/sanity/client.ts` — pass it as the 3rd arg to every `client.fetch`. Detail pages used to be 3600s; tightened so the artist's edit-iteration loop in Studio doesn't lag for an hour.
+- Detail routes (`/projx/[slug]`, `/notes/[slug]`) export `generateStaticParams` so all slugs prerender at build (SSG); ISR keeps them fresh. `src/app/sitemap.ts` + `robots.ts` are generated from Sanity; both `sitemap.ts`/`robots.ts` and `metadataBase` (root layout) hardcode `https://bxrs.art` — update all three together if the canonical domain changes.
 - `client` (`src/sanity/client.ts`) uses `useCdn: process.env.NODE_ENV === 'production'` — production hits Sanity's edge cache for speed; dev hits the live API so edits show up immediately.
 - Project detail pages render a **structured header** (title + meta + lede + materials) from project fields, then the **hero `tileImage`** (next/image, capped at 64rem, BXRS card signature border + shadow), then a composable body via `BlockRenderer`
 - The Info page renders an optional `featureImage` above the H1 in the left column (same card-signature treatment)

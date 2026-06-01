@@ -584,6 +584,13 @@ export type POST_QUERY_RESULT = {
   }> | null;
 } | null;
 
+// Source: ../src/app/(site)/notes/[slug]/page.tsx
+// Variable: POST_SLUGS_QUERY
+// Query: *[_type == "post" && defined(slug.current)]{ "slug": slug.current }
+export type POST_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+}>;
+
 // Source: ../src/app/(site)/notes/page.tsx
 // Variable: POSTS_QUERY
 // Query: *[  _type == "post"  && defined(slug.current)]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}
@@ -641,7 +648,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../src/app/(site)/projx/[slug]/page.tsx
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{  title,  description,  lede,  materials,  year,  categories,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileImage {    asset-> {      _id,      url,      metadata { dimensions { width, height } }    }  },  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
+// Query: *[_type == "project" && slug.current == $slug][0]{  title,  description,  lede,  materials,  year,  categories,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileImage {    asset-> {      _id,      url,      metadata { dimensions { width, height } }    }  },  content[]{    ...,    _type == "imageBlock" => {      "dimensions": image.asset->metadata.dimensions    }  },  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
 export type PROJECT_QUERY_RESULT = {
   title: string | null;
   description: string | null;
@@ -664,24 +671,160 @@ export type PROJECT_QUERY_RESULT = {
     } | null;
   } | null;
   content: Array<
-    | ({
+    | {
         _key: string;
-      } & ColorBlock)
-    | ({
+        _type: "colorBlock";
+        backgroundColor?: string;
+        height?: "full" | "lg" | "md" | "sm" | "xl";
+        padding?: "lg" | "md" | "none" | "sm";
+        maxWidth?: "3xl" | "5xl" | "7xl" | "full" | "xl";
+        alignment?: "center" | "left" | "right";
+      }
+    | {
         _key: string;
-      } & HeadingBlock)
-    | ({
+        _type: "headingBlock";
+        text?: string;
+        level?: "h1" | "h2" | "h3" | "h4";
+        fontFamily?: "display" | "mono" | "sans" | "serif";
+        fontSize?:
+          | "t-12"
+          | "t-120"
+          | "t-14"
+          | "t-16"
+          | "t-18"
+          | "t-20"
+          | "t-24"
+          | "t-32"
+          | "t-44"
+          | "t-60"
+          | "t-84";
+        textTransform?: "capitalize" | "lowercase" | "none" | "uppercase";
+        textAlign?: "center" | "left" | "right";
+        backgroundColor?: string;
+        maxWidth?: "3xl" | "5xl" | "7xl" | "full" | "xl";
+        alignment?: "center" | "left" | "right";
+      }
+    | {
         _key: string;
-      } & ImageBlock)
-    | ({
+        _type: "imageBlock";
+        image?: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        caption?: string;
+        captionFontFamily?: "display" | "mono" | "sans" | "serif";
+        captionFontSize?:
+          | "t-12"
+          | "t-120"
+          | "t-14"
+          | "t-16"
+          | "t-18"
+          | "t-20"
+          | "t-24"
+          | "t-32"
+          | "t-44"
+          | "t-60"
+          | "t-84";
+        link?: string;
+        backgroundColor?: string;
+        maxWidth?: "3xl" | "5xl" | "7xl" | "full" | "xl";
+        alignment?: "center" | "left" | "right";
+        dimensions: SanityImageDimensions | null;
+      }
+    | {
         _key: string;
-      } & LinkBlock)
-    | ({
+        _type: "linkBlock";
+        title?: string;
+        url?: string;
+        description?: string;
+        openInNewTab?: boolean;
+        titleFontFamily?: "display" | "mono" | "sans" | "serif";
+        titleFontSize?:
+          | "t-12"
+          | "t-120"
+          | "t-14"
+          | "t-16"
+          | "t-18"
+          | "t-20"
+          | "t-24"
+          | "t-32"
+          | "t-44"
+          | "t-60"
+          | "t-84";
+        descriptionFontFamily?: "display" | "mono" | "sans" | "serif";
+        descriptionFontSize?:
+          | "t-12"
+          | "t-120"
+          | "t-14"
+          | "t-16"
+          | "t-18"
+          | "t-20"
+          | "t-24"
+          | "t-32"
+          | "t-44"
+          | "t-60"
+          | "t-84";
+        backgroundColor?: string;
+        maxWidth?: "3xl" | "5xl" | "7xl" | "full" | "xl";
+        alignment?: "center" | "left" | "right";
+      }
+    | {
         _key: string;
-      } & SpacerBlock)
-    | ({
+        _type: "spacerBlock";
+        height?: "lg" | "md" | "sm" | "xl" | "xs";
+      }
+    | {
         _key: string;
-      } & TextBlock)
+        _type: "textBlock";
+        content?: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "blockquote"
+            | "h1"
+            | "h2"
+            | "h3"
+            | "h4"
+            | "h5"
+            | "h6"
+            | "normal";
+          listItem?: "bullet" | "number";
+          markDefs?: Array<{
+            href?: string;
+            _type: "link";
+            _key: string;
+          }>;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }>;
+        fontFamily?: "display" | "mono" | "sans" | "serif";
+        fontSize?:
+          | "t-12"
+          | "t-120"
+          | "t-14"
+          | "t-16"
+          | "t-18"
+          | "t-20"
+          | "t-24"
+          | "t-32"
+          | "t-44"
+          | "t-60"
+          | "t-84";
+        fontWeight?: "bold" | "medium" | "normal" | "semibold";
+        textTransform?: "capitalize" | "lowercase" | "none" | "uppercase";
+        textAlign?: "center" | "left" | "right";
+        backgroundColor?: string;
+        maxWidth?: "3xl" | "5xl" | "7xl" | "full" | "xl";
+        alignment?: "center" | "left" | "right";
+      }
   > | null;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -692,6 +835,27 @@ export type PROJECT_QUERY_RESULT = {
     } | null;
   } | null;
 } | null;
+
+// Source: ../src/app/(site)/projx/[slug]/page.tsx
+// Variable: PROJECT_SLUGS_QUERY
+// Query: *[_type == "project" && defined(slug.current)]{ "slug": slug.current }
+export type PROJECT_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+}>;
+
+// Source: ../src/app/sitemap.ts
+// Variable: SITEMAP_QUERY
+// Query: {  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, _updatedAt },  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, _updatedAt }}
+export type SITEMAP_QUERY_RESULT = {
+  projects: Array<{
+    slug: string | null;
+    _updatedAt: string;
+  }>;
+  posts: Array<{
+    slug: string | null;
+    _updatedAt: string;
+  }>;
+};
 
 // Source: ../src/sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
@@ -713,10 +877,13 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "info"][0]{\n  title,\n  featureImage {\n    asset-> {\n      _id,\n      url,\n      metadata { dimensions { width, height } }\n    }\n  },\n  bio,\n  contactLabel,\n  contactEmail,\n  stacks[]{\n    heading,\n    rows[]{label, value}\n  }\n}': INFO_QUERY_RESULT;
     '*[_type == "post" && slug.current == $slug][0]{\n  title,\n  publishedAt,\n  excerpt,\n  body\n}': POST_QUERY_RESULT;
+    '*[_type == "post" && defined(slug.current)]{ "slug": slug.current }': POST_SLUGS_QUERY_RESULT;
     '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}': POSTS_QUERY_RESULT;
     '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  "tileImageUrl": tileImage.asset->url\n}': PINNED_PROJECTS_QUERY_RESULT;
     '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(coalesce(year, 0) desc, order asc){\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  "tileImageUrl": tileImage.asset->url\n}': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileImage {\n    asset-> {\n      _id,\n      url,\n      metadata { dimensions { width, height } }\n    }\n  },\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
+    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileImage {\n    asset-> {\n      _id,\n      url,\n      metadata { dimensions { width, height } }\n    }\n  },\n  content[]{\n    ...,\n    _type == "imageBlock" => {\n      "dimensions": image.asset->metadata.dimensions\n    }\n  },\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
+    '*[_type == "project" && defined(slug.current)]{ "slug": slug.current }': PROJECT_SLUGS_QUERY_RESULT;
+    '{\n  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, _updatedAt },\n  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, _updatedAt }\n}': SITEMAP_QUERY_RESULT;
     '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  socialLinks,\n  contactEmail\n}': SITE_SETTINGS_QUERY_RESULT;
   }
 }

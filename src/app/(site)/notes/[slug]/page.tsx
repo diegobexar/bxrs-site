@@ -1,5 +1,5 @@
 import { PortableText, defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
+import { client, sanityFetch } from "@/sanity/client";
 import Link from "next/link";
 import { formatDate } from "@/lib/date";
 
@@ -10,7 +10,14 @@ const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0]{
   body
 }`);
 
-const options = { next: { revalidate: 30 } };
+const POST_SLUGS_QUERY = defineQuery(
+  `*[_type == "post" && defined(slug.current)]{ "slug": slug.current }`,
+);
+
+export async function generateStaticParams() {
+  const posts = await client.fetch(POST_SLUGS_QUERY);
+  return posts.flatMap((p) => (p.slug ? [{ slug: p.slug }] : []));
+}
 
 function readingTime(body: unknown): string {
   if (!Array.isArray(body)) return "—";
@@ -34,7 +41,7 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await client.fetch(POST_QUERY, { slug }, options);
+  const post = await client.fetch(POST_QUERY, { slug }, sanityFetch);
 
   if (!post) {
     return (

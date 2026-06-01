@@ -180,7 +180,16 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
 }
 
 function ImageBlock({ block }: { block: any }) {
-  const imageUrl = block.image ? urlFor(block.image)?.url() : null;
+  // Constrain the optimizer's source fetch; next/image still serves
+  // device-appropriate widths from this. Real asset dimensions (derefed in
+  // the project query) keep the rendered aspect ratio true — fall back to a
+  // neutral 3:2 only when an older document lacks metadata.
+  const imageUrl = block.image
+    ? (urlFor(block.image)?.width(1600).url() ?? null)
+    : null;
+  const dims = block.dimensions;
+  const imgWidth = Math.round(dims?.width) || 1200;
+  const imgHeight = Math.round(dims?.height) || 800;
   const backgroundColor = block.backgroundColor || "transparent";
   const captionFamily = pick(
     fontFamilyMap,
@@ -206,8 +215,8 @@ function ImageBlock({ block }: { block: any }) {
         <Image
           src={imageUrl}
           alt={block.caption || ""}
-          width={1200}
-          height={800}
+          width={imgWidth}
+          height={imgHeight}
           style={{ width: "100%", height: "auto", display: "block" }}
           sizes="100vw"
           priority={false}

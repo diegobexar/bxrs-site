@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
+import { client, sanityFetch } from "@/sanity/client";
 import { formatDate } from "@/lib/date";
 
 const POSTS_QUERY = defineQuery(`*[
@@ -8,10 +8,8 @@ const POSTS_QUERY = defineQuery(`*[
   && defined(slug.current)
 ]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}`);
 
-const options = { next: { revalidate: 30 } };
-
 export default async function NotesPage() {
-  const posts = await client.fetch(POSTS_QUERY, {}, options);
+  const posts = await client.fetch(POSTS_QUERY, {}, sanityFetch);
 
   return (
     <main className="blog-index">
