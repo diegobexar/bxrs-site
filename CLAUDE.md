@@ -9,6 +9,7 @@ Repository: `bxrs-site` (single repo containing both the Next.js app and the San
 The site is governed by the **BXRS design system** in `/bxrs-design/`. It is the visual authority — every new page, component, and route must reference it.
 
 - **`bxrs-design/SKILL.md`** — brand voice + hard rules. Invokable as `/skill bxrs-design` for AI-assisted page building.
+- **`.claude/skills/seed-project/`** — `/seed-project` workflow: from an image + notes, drafts `description`/`lede`/`materials` in brand voice, recommends an AA-safe `cardBackgroundColor`/`cardTextColor` pair (via `scripts/contrast.mjs`) and a `tileVariant`, then writes the project to Sanity as a **draft** (`drafts.` id) using the authenticated HTTP API — not the MCP write tools (schema-drift). Read its `reference.md` for the write recipe + field map.
 - **`bxrs-design/README.md`** — visual foundations (color philosophy, type system, layout, hover/press states, imagery, iconography).
 - **`bxrs-design/INTEGRATION.md`** — Sanity schema contract + Studio input components + Tile component reference.
 - **`bxrs-design/colors_and_type.css`** — single source of truth for tokens (mirrored into `src/styles/bxrs-tokens.css`).
@@ -87,6 +88,8 @@ studio/                      # Sanity Studio (separate package, excluded from ts
 public/
 └── fonts/                   # Raygun custom font files (woff, woff2)
 bxrs-design/                 # Design system source (do not edit at runtime — see top of file)
+.claude/skills/
+└── seed-project/            # /seed-project — draft a new project (voice copy, AA colors, variant) and seed it to Sanity as a draft
 ```
 
 ## Development
