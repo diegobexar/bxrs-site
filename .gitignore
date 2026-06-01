@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local scratch — legacy WP import + local Studio scripts
+/Old BXRS.ART/
+/studio/scripts/
