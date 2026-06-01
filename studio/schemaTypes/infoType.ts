@@ -9,9 +9,16 @@ export const infoType = defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      description: 'Big H1 at the top of the page (e.g. "ABOUT.").',
-      initialValue: 'ABOUT.',
+      description: 'Big H1 at the top of the page (e.g. "INFO.").',
+      initialValue: 'INFO.',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'featureImage',
+      title: 'Feature Image',
+      type: 'image',
+      description: 'Portrait sitting above the title in the left column.',
+      options: {hotspot: true},
     }),
     defineField({
       name: 'bio',

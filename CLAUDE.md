@@ -22,7 +22,7 @@ The site is governed by the **BXRS design system** in `/bxrs-design/`. It is the
 - `src/styles/bxrs-components.css` — component CSS (site-header, site-footer, tile, project, blog-index, blog-post, about)
 - `src/lib/contrast.ts` — WCAG contrast helpers; `studio/lib/contrast.ts` is the Studio-side mirror (keep in sync)
 - `src/components/Tile.tsx` — six-variant homepage tile
-- `src/components/SiteHeader.tsx` + `src/components/NavLinks.tsx` — sticky header (WORK / STUDIO NOTES / ABOUT)
+- `src/components/SiteHeader.tsx` + `src/components/NavLinks.tsx` — sticky header (WORK / STUDIO NOTES / INFO)
 - `src/components/SiteFooter.tsx` — full-bleed ink footer with giant Raygun wordmark
 - `studio/components/TextColorPicker.tsx` — Studio input that enforces AA contrast against `cardBackgroundColor`
 
@@ -38,14 +38,17 @@ The site is governed by the **BXRS design system** in `/bxrs-design/`. It is the
 ## Project Structure
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── layout.tsx          # Root layout (fonts, SiteHeader, SiteFooter)
+├── app/                    # Next.js App Router
+│   ├── layout.tsx          # Root layout — html/body/fonts only (no chrome)
 │   ├── globals.css         # @import order: tailwind → bxrs-tokens → bxrs-components
-│   ├── page.tsx            # Homepage — Tile grid (pinned + featured)
-│   ├── blog/               # Studio Notes list + [slug] detail pages
-│   ├── info/               # About page (from siteSettings)
-│   ├── projx/[slug]/       # Project detail (structured header + BlockRenderer)
-│   └── studio/[[...tool]]/ # Embedded Sanity Studio (NextStudio)
+│   ├── (site)/             # Route group — site chrome (SiteHeader + SiteFooter)
+│   │   ├── layout.tsx      # Wraps children with SiteHeader/SiteFooter
+│   │   ├── page.tsx        # Homepage — Tile grid (pinned + featured)
+│   │   ├── loading.tsx     # Loading state for site routes
+│   │   ├── blog/           # Studio Notes list + [slug] detail pages
+│   │   ├── info/           # Info page (feature image + bio + stacks)
+│   │   └── projx/[slug]/   # Project detail (structured header + hero tileImage + BlockRenderer)
+│   └── studio/[[...tool]]/ # Embedded Sanity Studio (NextStudio) — outside (site) group so Studio chrome owns the viewport
 ├── components/
 │   ├── SiteHeader.tsx        # Sticky 64px header (server)
 │   ├── NavLinks.tsx          # Client child of SiteHeader — pathname-aware
@@ -74,6 +77,7 @@ studio/                      # Sanity Studio (separate package, excluded from ts
     ├── postType.ts          # Blog post schema (title, slug, publishedAt, image, excerpt, body)
     ├── projectType.ts       # Project schema (description, lede, materials, tileVariant, ...)
     ├── siteSettingsType.ts  # Site settings (singleton — no theme field)
+    ├── infoType.ts          # Info page (singleton — featureImage, bio, contactEmail, stacks)
     └── blockContent/        # Composable block types
 public/
 └── fonts/                   # Raygun custom font files (woff, woff2)
@@ -111,7 +115,9 @@ npm run typegen:generate # Step 2: scan GROQ queries and emit src/sanity/sanity.
 - Re-run `npm run typegen` after editing the studio schema OR adding/changing a GROQ query
 - ISR revalidation: 30s across the board (list + detail). Detail pages used to be 3600s; tightened so the artist's edit-iteration loop in Studio doesn't lag for an hour.
 - `client` (`src/sanity/client.ts`) uses `useCdn: process.env.NODE_ENV === 'production'` — production hits Sanity's edge cache for speed; dev hits the live API so edits show up immediately.
-- Project detail pages render a **structured header** (title + meta + lede + materials) from project fields, then a composable body via `BlockRenderer`
+- Project detail pages render a **structured header** (title + meta + lede + materials) from project fields, then the **hero `tileImage`** (next/image, capped at 64rem, BXRS card signature border + shadow), then a composable body via `BlockRenderer`
+- The Info page renders an optional `featureImage` above the H1 in the left column (same card-signature treatment)
+- Route group split: `src/app/(site)/` carries SiteHeader + SiteFooter chrome via `(site)/layout.tsx`; the root layout (`src/app/layout.tsx`) is fonts-only. `src/app/studio/` lives outside the group so the embedded Sanity Studio gets the full viewport — without this, its bottom action bar (with the Publish button) gets clipped by SiteFooter.
 - The `studio/` directory is a separate package with its own `node_modules` — not part of the Next.js build
 - Homepage grid: pinned projects (max 3, top row) + featured projects (below); both rendered via `Tile`
 
@@ -132,7 +138,7 @@ npm run typegen:generate # Step 2: scan GROQ queries and emit src/sanity/sanity.
 - **post**: `title`, `slug`, `publishedAt`, `image`, `excerpt`, `body` (Portable Text)
 - **project**: `title`, `slug`, `description` (2-row, card blurb), `lede` (3-row, serif intro), `materials`, `showOnHomepage`, `pinToTopRow`, `order`, `tileVariant` (`color | image-bleed | image-bar | image-corner | type-only | video`), `tileImage`, `videoDuration`, `cardBackgroundColor` (color picker), `cardTextColor` (contrast-validated picker), `year` (number, e.g. 2024), `categories`, `content` (composable blocks), SEO fields
 - **siteSettings**: singleton — `siteTitle`, `siteDescription` (drives homepage headline + SEO), `socialLinks`, `contactEmail`. No `theme` field — site is cream-only by design.
-- **info**: singleton — `title`, `bio` (Portable Text paragraphs), `contactLabel`, `contactEmail` (overrides siteSettings), `stacks` (array of `{heading, rows: [{label, value}]}`). Drives `/info` page.
+- **info**: singleton — `title`, `featureImage` (portrait above the H1), `bio` (Portable Text paragraphs), `contactLabel`, `contactEmail` (overrides siteSettings), `stacks` (array of `{heading, rows: [{label, value}]}`). Drives `/info` page.
 - **Block types**: `imageBlock`, `textBlock`, `linkBlock`, `headingBlock`, `colorBlock`, `spacerBlock` — all support layout fields (`maxWidth`, `alignment`)
 
 ### Singletons
@@ -146,6 +152,7 @@ Defined in `studio/schemaTypes/index.ts` as the `SINGLETONS` array. Both Studio 
 - `studio/components/TextColorPicker.tsx` reads sibling `cardBackgroundColor` via `useFormValue(['cardBackgroundColor'])`; only swatches meeting AA contrast (4.5:1) are enabled
 
 ## Common Mistakes to Avoid
+- DON'T: Add SiteHeader / SiteFooter to the root layout — they belong in `src/app/(site)/layout.tsx`, never above the studio route
 - DON'T: Import from `studio/` in Next.js code — they are separate packages
 - DON'T: Use client components unnecessarily — all pages are server components fetching data directly. The only client island is `NavLinks` for active-route highlighting.
 - DON'T: Forget `await params` in dynamic route pages — Next.js 16 passes params as a Promise

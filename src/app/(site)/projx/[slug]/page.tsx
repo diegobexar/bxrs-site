@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
-import Link from "next/link";
+import Image from "next/image";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { MultilineText } from "@/components/MultilineText";
 import type { Metadata } from "next";
@@ -17,6 +17,13 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
   categories,
   "cardBackgroundColor": cardBackgroundColor.hex,
   cardTextColor,
+  tileImage {
+    asset-> {
+      _id,
+      url,
+      metadata { dimensions { width, height } }
+    }
+  },
   content,
   seoTitle,
   seoDescription,
@@ -81,9 +88,6 @@ export default async function ProjectPage({
   if (!project) {
     return (
       <main className="project">
-        <div className="crumb">
-          <Link href="/">← WORK</Link>
-        </div>
         <h1>Project not found</h1>
       </main>
     );
@@ -101,10 +105,6 @@ export default async function ProjectPage({
   return (
     <main className="page color-page" style={pageStyle}>
       <div className="project">
-        <div className="crumb">
-          <Link href="/">← WORK</Link>
-        </div>
-
         <h1>
           <MultilineText value={project.title} />
         </h1>
@@ -137,6 +137,21 @@ export default async function ProjectPage({
         </div>
 
         {project.lede && <p className="lede">{project.lede}</p>}
+
+        {project.tileImage?.asset?.url &&
+          project.tileImage.asset.metadata?.dimensions?.width &&
+          project.tileImage.asset.metadata.dimensions.height && (
+            <figure className="project-hero">
+              <Image
+                src={project.tileImage.asset.url}
+                alt={project.title ?? ""}
+                width={project.tileImage.asset.metadata.dimensions.width}
+                height={project.tileImage.asset.metadata.dimensions.height}
+                sizes="(min-width: 1280px) 1024px, (min-width: 768px) 90vw, 100vw"
+                priority
+              />
+            </figure>
+          )}
       </div>
 
       {project.content && <BlockRenderer blocks={project.content} />}

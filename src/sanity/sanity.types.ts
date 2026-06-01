@@ -174,6 +174,13 @@ export type Info = {
   _updatedAt: string;
   _rev: string;
   title?: string;
+  featureImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   bio?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -205,6 +212,22 @@ export type Info = {
     _type: "stack";
     _key: string;
   }>;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type SiteSettings = {
@@ -285,22 +308,6 @@ export type Project = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type Color = {
@@ -485,10 +492,10 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | ImageBlock
   | Info
-  | SiteSettings
-  | Project
   | SanityImageCrop
   | SanityImageHotspot
+  | SiteSettings
+  | Project
   | Color
   | Slug
   | Post
@@ -504,49 +511,23 @@ export type AllSanitySchemaTypes =
   | SanityImageAsset
   | Geopoint;
 
-// Source: ../src/app/blog/[slug]/page.tsx
-// Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0]{  title,  publishedAt,  excerpt,  body}
-export type POST_QUERY_RESULT = {
-  title: string | null;
-  publishedAt: string | null;
-  excerpt: string | null;
-  body: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
-} | null;
-
-// Source: ../src/app/blog/page.tsx
-// Variable: POSTS_QUERY
-// Query: *[  _type == "post"  && defined(slug.current)]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}
-export type POSTS_QUERY_RESULT = Array<{
-  _id: string;
-  title: string | null;
-  slug: Slug | null;
-  publishedAt: string | null;
-  excerpt: string | null;
-}>;
-
-// Source: ../src/app/info/page.tsx
+// Source: ../src/app/(site)/info/page.tsx
 // Variable: INFO_QUERY
-// Query: *[_type == "info"][0]{  title,  bio,  contactLabel,  contactEmail,  stacks[]{    heading,    rows[]{label, value}  }}
+// Query: *[_type == "info"][0]{  title,  featureImage {    asset-> {      _id,      url,      metadata { dimensions { width, height } }    }  },  bio,  contactLabel,  contactEmail,  stacks[]{    heading,    rows[]{label, value}  }}
 export type INFO_QUERY_RESULT = {
   title: string | null;
+  featureImage: {
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+      } | null;
+    } | null;
+  } | null;
   bio: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -576,9 +557,47 @@ export type INFO_QUERY_RESULT = {
   }> | null;
 } | null;
 
-// Source: ../src/app/page.tsx
+// Source: ../src/app/(site)/notes/[slug]/page.tsx
+// Variable: POST_QUERY
+// Query: *[_type == "post" && slug.current == $slug][0]{  title,  publishedAt,  excerpt,  body}
+export type POST_QUERY_RESULT = {
+  title: string | null;
+  publishedAt: string | null;
+  excerpt: string | null;
+  body: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+} | null;
+
+// Source: ../src/app/(site)/notes/page.tsx
+// Variable: POSTS_QUERY
+// Query: *[  _type == "post"  && defined(slug.current)]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}
+export type POSTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  publishedAt: string | null;
+  excerpt: string | null;
+}>;
+
+// Source: ../src/app/(site)/page.tsx
 // Variable: PINNED_PROJECTS_QUERY
-// Query: *[  _type == "project"  && pinToTopRow == true  && defined(slug.current)]|order(order asc)[0...3]{  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  year,  categories,  "tileImageUrl": tileImage.asset->url,  order}
+// Query: *[  _type == "project"  && pinToTopRow == true  && defined(slug.current)]|order(order asc)[0...3]{  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  "tileImageUrl": tileImage.asset->url}
 export type PINNED_PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -595,15 +614,12 @@ export type PINNED_PROJECTS_QUERY_RESULT = Array<{
     | "video"
     | null;
   videoDuration: string | null;
-  year: number | null;
-  categories: Array<string> | null;
   tileImageUrl: string | null;
-  order: number | null;
 }>;
 
-// Source: ../src/app/page.tsx
+// Source: ../src/app/(site)/page.tsx
 // Variable: FEATURED_PROJECTS_QUERY
-// Query: *[  _type == "project"  && showOnHomepage == true  && pinToTopRow != true  && defined(slug.current)]|order(order asc){  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  year,  categories,  "tileImageUrl": tileImage.asset->url,  order}
+// Query: *[  _type == "project"  && showOnHomepage == true  && pinToTopRow != true  && defined(slug.current)]|order(coalesce(year, 0) desc, order asc){  _id,  title,  slug,  description,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileVariant,  videoDuration,  "tileImageUrl": tileImage.asset->url}
 export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -620,15 +636,12 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
     | "video"
     | null;
   videoDuration: string | null;
-  year: number | null;
-  categories: Array<string> | null;
   tileImageUrl: string | null;
-  order: number | null;
 }>;
 
-// Source: ../src/app/projx/[slug]/page.tsx
+// Source: ../src/app/(site)/projx/[slug]/page.tsx
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{  title,  description,  lede,  materials,  year,  categories,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
+// Query: *[_type == "project" && slug.current == $slug][0]{  title,  description,  lede,  materials,  year,  categories,  "cardBackgroundColor": cardBackgroundColor.hex,  cardTextColor,  tileImage {    asset-> {      _id,      url,      metadata { dimensions { width, height } }    }  },  content,  seoTitle,  seoDescription,  seoImage {    asset-> {      _id,      url    }  }}
 export type PROJECT_QUERY_RESULT = {
   title: string | null;
   description: string | null;
@@ -638,6 +651,18 @@ export type PROJECT_QUERY_RESULT = {
   categories: Array<string> | null;
   cardBackgroundColor: string | null;
   cardTextColor: string | null;
+  tileImage: {
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+      } | null;
+    } | null;
+  } | null;
   content: Array<
     | ({
         _key: string;
@@ -686,12 +711,12 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    '*[_type == "info"][0]{\n  title,\n  featureImage {\n    asset-> {\n      _id,\n      url,\n      metadata { dimensions { width, height } }\n    }\n  },\n  bio,\n  contactLabel,\n  contactEmail,\n  stacks[]{\n    heading,\n    rows[]{label, value}\n  }\n}': INFO_QUERY_RESULT;
     '*[_type == "post" && slug.current == $slug][0]{\n  title,\n  publishedAt,\n  excerpt,\n  body\n}': POST_QUERY_RESULT;
     '*[\n  _type == "post"\n  && defined(slug.current)\n]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, excerpt}': POSTS_QUERY_RESULT;
-    '*[_type == "info"][0]{\n  title,\n  bio,\n  contactLabel,\n  contactEmail,\n  stacks[]{\n    heading,\n    rows[]{label, value}\n  }\n}': INFO_QUERY_RESULT;
-    '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': PINNED_PROJECTS_QUERY_RESULT;
-    '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(order asc){\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  year,\n  categories,\n  "tileImageUrl": tileImage.asset->url,\n  order\n}': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
+    '*[\n  _type == "project"\n  && pinToTopRow == true\n  && defined(slug.current)\n]|order(order asc)[0...3]{\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  "tileImageUrl": tileImage.asset->url\n}': PINNED_PROJECTS_QUERY_RESULT;
+    '*[\n  _type == "project"\n  && showOnHomepage == true\n  && pinToTopRow != true\n  && defined(slug.current)\n]|order(coalesce(year, 0) desc, order asc){\n  _id,\n  title,\n  slug,\n  description,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileVariant,\n  videoDuration,\n  "tileImageUrl": tileImage.asset->url\n}': FEATURED_PROJECTS_QUERY_RESULT;
+    '*[_type == "project" && slug.current == $slug][0]{\n  title,\n  description,\n  lede,\n  materials,\n  year,\n  categories,\n  "cardBackgroundColor": cardBackgroundColor.hex,\n  cardTextColor,\n  tileImage {\n    asset-> {\n      _id,\n      url,\n      metadata { dimensions { width, height } }\n    }\n  },\n  content,\n  seoTitle,\n  seoDescription,\n  seoImage {\n    asset-> {\n      _id,\n      url\n    }\n  }\n}': PROJECT_QUERY_RESULT;
     '*[_type == "siteSettings"][0]{\n  siteTitle,\n  siteDescription,\n  socialLinks,\n  contactEmail\n}': SITE_SETTINGS_QUERY_RESULT;
   }
 }

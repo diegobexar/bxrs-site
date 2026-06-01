@@ -10,12 +10,12 @@ const POSTS_QUERY = defineQuery(`*[
 
 const options = { next: { revalidate: 30 } };
 
-export default async function BlogPage() {
+export default async function NotesPage() {
   const posts = await client.fetch(POSTS_QUERY, {}, options);
 
   return (
     <main className="blog-index">
-      <h1>Studio Notes</h1>
+      <h1>Notes</h1>
       <p className="lede">Writing on practice, materials, and process.</p>
 
       {posts.length === 0 ? (
@@ -25,7 +25,7 @@ export default async function BlogPage() {
           {posts.map((post) => (
             <li key={post._id}>
               <Link
-                href={`/blog/${post.slug?.current}`}
+                href={`/notes/${post.slug?.current}`}
                 className="post-item"
                 style={{ color: "inherit" }}
               >

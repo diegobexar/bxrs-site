@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -37,9 +35,7 @@ export default function RootLayout({
       <body
         className={`${archivo.variable} ${newsreader.variable} ${jbMono.variable} antialiased`}
       >
-        <SiteHeader />
         {children}
-        <SiteFooter />
       </body>
     </html>
   );

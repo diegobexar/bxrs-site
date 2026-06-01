@@ -40,7 +40,7 @@ export default async function PostPage({
     return (
       <main className="blog-post">
         <div className="crumb">
-          <Link href="/blog">← STUDIO NOTES</Link>
+          <Link href="/notes">← NOTES</Link>
         </div>
         <h1>Post not found</h1>
       </main>
@@ -50,7 +50,7 @@ export default async function PostPage({
   return (
     <main className="blog-post">
       <div className="crumb">
-        <Link href="/blog">← STUDIO NOTES</Link>
+        <Link href="/notes">← NOTES</Link>
       </div>
 
       {post.excerpt && <p className="eyebrow">{post.excerpt}</p>}

@@ -24,7 +24,7 @@ export async function SiteFooter() {
           <h4>WRITING</h4>
           <ul>
             <li>
-              <Link href="/blog">Studio Notes</Link>
+              <Link href="/notes">Notes</Link>
             </li>
           </ul>
         </div>
@@ -55,7 +55,7 @@ export async function SiteFooter() {
               <li>—</li>
             )}
             <li>
-              <Link href="/info">About</Link>
+              <Link href="/info">Info</Link>
             </li>
           </ul>
         </div>

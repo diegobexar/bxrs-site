@@ -14,11 +14,9 @@ export type TileProject = {
   tileVariant?: TileVariant | null;
   tileImageUrl?: string | null;
   videoDuration?: string | null;
-  year?: number | null;
-  categories?: string[] | null;
 };
 
-type Props = { project: TileProject; index: number };
+type Props = { project: TileProject };
 
 const FALLBACK_BG = "#F4EFE3";
 const FALLBACK_FG = "#111111";
@@ -29,26 +27,12 @@ function bgHex(value: TileProject["cardBackgroundColor"]): string {
   return value.hex ?? FALLBACK_BG;
 }
 
-function topMeta(project: TileProject): string {
-  const cat = project.categories?.[0]?.toUpperCase();
-  return [project.year, cat].filter(Boolean).join(" · ");
-}
-
-export function Tile({ project, index }: Props) {
+export function Tile({ project }: Props) {
   const variant: TileVariant = project.tileVariant ?? "color";
   const bg = bgHex(project.cardBackgroundColor);
   const fg = project.cardTextColor ?? FALLBACK_FG;
-  const idx = String(index + 1).padStart(2, "0");
-  const meta = topMeta(project);
   const href = `/projx/${project.slug?.current ?? ""}`;
   const baseStyle = { background: bg, color: fg } as const;
-
-  const Topline = (
-    <div className="tile-topline">
-      <span>{idx}</span>
-      <span>{meta}</span>
-    </div>
-  );
 
   const TitleBlock = (
     <div className="tile-title-block">
@@ -72,13 +56,10 @@ export function Tile({ project, index }: Props) {
         <div
           className="tile-veil"
           style={{
-            background: `linear-gradient(180deg, transparent 0%, ${bg} 95%)`,
+            background: `linear-gradient(180deg, transparent 0%, transparent 40%, ${bg} 92%)`,
           }}
         />
-        <div className="tile-overlay">
-          {Topline}
-          {TitleBlock}
-        </div>
+        <div className="tile-overlay">{TitleBlock}</div>
       </Link>
     );
   }
@@ -87,10 +68,7 @@ export function Tile({ project, index }: Props) {
     return (
       <Link href={href} className="tile tile-image-bar" style={baseStyle}>
         <div className="tile-image" style={imgStyle} />
-        <div className="tile-bar">
-          {Topline}
-          {TitleBlock}
-        </div>
+        <div className="tile-bar">{TitleBlock}</div>
       </Link>
     );
   }
@@ -99,10 +77,7 @@ export function Tile({ project, index }: Props) {
     return (
       <Link href={href} className="tile tile-image-corner" style={baseStyle}>
         <div className="tile-corner-img" style={imgStyle} />
-        <div className="tile-corner-text">
-          {Topline}
-          {TitleBlock}
-        </div>
+        <div className="tile-corner-text">{TitleBlock}</div>
       </Link>
     );
   }
@@ -111,7 +86,6 @@ export function Tile({ project, index }: Props) {
     const lines = (project.title ?? "").split("\n");
     return (
       <Link href={href} className="tile tile-type-only" style={baseStyle}>
-        {Topline}
         <svg
           className="tile-type-svg"
           viewBox={`0 0 100 ${lines.length * 22}`}
@@ -152,7 +126,7 @@ export function Tile({ project, index }: Props) {
         <div
           className="tile-veil"
           style={{
-            background: `linear-gradient(180deg, transparent 0%, transparent 50%, ${bg} 95%)`,
+            background: `linear-gradient(180deg, transparent 0%, transparent 55%, ${bg} 95%)`,
           }}
         />
         <div className="tile-overlay">
@@ -173,7 +147,6 @@ export function Tile({ project, index }: Props) {
                 <span>VIDEO</span>
               )}
             </span>
-            <span>{meta}</span>
           </div>
           <div className="tile-video-center" aria-hidden="true">
             <span className="tile-play" style={{ background: fg }}>
@@ -195,7 +168,6 @@ export function Tile({ project, index }: Props) {
 
   return (
     <Link href={href} className="tile tile-color" style={baseStyle}>
-      {Topline}
       {TitleBlock}
     </Link>
   );

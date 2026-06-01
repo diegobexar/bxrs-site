@@ -22,10 +22,7 @@ const PROJECT_CARD_PROJECTION = `{
   cardTextColor,
   tileVariant,
   videoDuration,
-  year,
-  categories,
-  "tileImageUrl": tileImage.asset->url,
-  order
+  "tileImageUrl": tileImage.asset->url
 }`;
 
 const PINNED_PROJECTS_QUERY = defineQuery(`*[
@@ -39,7 +36,7 @@ const FEATURED_PROJECTS_QUERY = defineQuery(`*[
   && showOnHomepage == true
   && pinToTopRow != true
   && defined(slug.current)
-]|order(order asc)${PROJECT_CARD_PROJECTION}`);
+]|order(coalesce(year, 0) desc, order asc)${PROJECT_CARD_PROJECTION}`);
 
 const options = { next: { revalidate: 30 } };
 
@@ -64,24 +61,16 @@ export default async function IndexPage() {
 
       {pinnedProjects.length > 0 && (
         <div className="tile-grid pinned">
-          {pinnedProjects.map((project, i) => (
-            <Tile
-              key={project._id}
-              project={project as TileProject}
-              index={i}
-            />
+          {pinnedProjects.map((project) => (
+            <Tile key={project._id} project={project as TileProject} />
           ))}
         </div>
       )}
 
       {featuredProjects.length > 0 && (
         <div className="tile-grid">
-          {featuredProjects.map((project, i) => (
-            <Tile
-              key={project._id}
-              project={project as TileProject}
-              index={pinnedProjects.length + i}
-            />
+          {featuredProjects.map((project) => (
+            <Tile key={project._id} project={project as TileProject} />
           ))}
         </div>
       )}
