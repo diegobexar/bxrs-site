@@ -11,6 +11,7 @@
     "studio:dev": "cd studio && npx sanity dev",
     "studio:build": "cd studio && npx sanity build",
     "studio:deploy": "cd studio && npx sanity deploy",
+    "schema:deploy": "cd studio && npx sanity schema deploy",
     "typegen:extract": "cd studio && npx sanity schema extract",
     "typegen:generate": "cd studio && npx sanity typegen generate",
     "typegen": "npm run typegen:extract && npm run typegen:generate"
